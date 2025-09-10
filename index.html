@@ -1398,9 +1398,11 @@
 
 	<button class="login-btn" id="google-login-btn">G</button>
 
-   	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-	
-         <script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js" defer
+        onerror="console.error('Supabase library failed to load')"></script>
+
+
+ <script>
         // Initialize Supabase with proper error handling
         let supabase;
         let supabaseInitialized = false;
@@ -1410,13 +1412,13 @@
                 if (typeof window.createClient !== 'undefined') {
                     supabase = window.createClient(
                         'https://eehtetwdvazzufunmrxb.supabase.co',
-                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5tcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ'
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ'
                     );
                     console.log("Supabase initialized successfully");
                     supabaseInitialized = true;
                     return true;
                 } else {
-                    console.error("Supabase client not available yet");
+                    console.log("Supabase library not loaded yet");
                     return false;
                 }
             } catch (error) {
@@ -1452,14 +1454,14 @@
             }
         }
         
-        // Set up login button after DOM is loaded
+        // Set up login button and initialize Supabase
         document.addEventListener('DOMContentLoaded', function() {
             const loginBtn = document.querySelector('.login-btn');
             if (loginBtn) {
                 loginBtn.addEventListener('click', loginWithGoogle);
             }
             
-            // Try to initialize Supabase after a short delay to ensure the library is loaded
+            // Try to initialize Supabase after a short delay
             setTimeout(() => {
                 if (initializeSupabase()) {
                     console.log("Supabase initialized on page load");
@@ -1469,6 +1471,7 @@
             }, 1000);
         });
     </script>
+
 
    <script>
         // Groq API Configuration
