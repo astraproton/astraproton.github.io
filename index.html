@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ASTRA - Cyber Interface</title>
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        connect-src 'self' https://api.groq.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        script-src 'self' 'unsafe-inline';
-        font-src https://fonts.gstatic.com;
-        img-src 'self' data:;
-        media-src *;
-    ">
+	<meta http-equiv="Content-Security-Policy" content="
+		default-src 'self';
+		connect-src 'self' https://api.groq.com https://*.supabase.co https://*.supabase.in;
+		style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+		script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+		font-src https://fonts.gstatic.com;
+		img-src 'self' data:;
+		media-src *;
+	">
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500&display=swap" rel="stylesheet">
@@ -1234,8 +1236,6 @@
     <!-- Connection Status -->
     <div class="connection-status" id="connection-status">NO INTERNET CONNECTION</div>
     
-    <!-- Login Button -->
-    <button class="login-btn" onclick="loginWithGoogle()">Login with Google</button>
     
     <!-- Boot Animation -->
     <div class="boot-animation" id="boot-animation">
@@ -1396,7 +1396,81 @@
         <div class="system-option" id="reboot-btn">Reboot</div>
     </div>
 
-    <script>
+	<button class="login-btn" id="google-login-btn">G</button>
+
+   	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+	
+         <script>
+        // Initialize Supabase with proper error handling
+        let supabase;
+        let supabaseInitialized = false;
+        
+        function initializeSupabase() {
+            try {
+                if (typeof window.createClient !== 'undefined') {
+                    supabase = window.createClient(
+                        'https://eehtetwdvazzufunmrxb.supabase.co',
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5tcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ'
+                    );
+                    console.log("Supabase initialized successfully");
+                    supabaseInitialized = true;
+                    return true;
+                } else {
+                    console.error("Supabase client not available yet");
+                    return false;
+                }
+            } catch (error) {
+                console.error("Error initializing Supabase:", error);
+                return false;
+            }
+        }
+        
+        // Google login function
+        async function loginWithGoogle() {
+            if (!supabaseInitialized) {
+                if (!initializeSupabase()) {
+                    console.error("Cannot login: Supabase not initialized");
+                    alert("Supabase is not ready yet. Please wait a moment and try again.");
+                    return;
+                }
+            }
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                });
+
+                if (error) {
+                    console.error("Login failed:", error.message);
+                    alert("Login failed: " + error.message);
+                } else {
+                    console.log("Login success:", data);
+                }
+            } catch (error) {
+                console.error("Login error:", error);
+                alert("Login error: " + error.message);
+            }
+        }
+        
+        // Set up login button after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginBtn = document.querySelector('.login-btn');
+            if (loginBtn) {
+                loginBtn.addEventListener('click', loginWithGoogle);
+            }
+            
+            // Try to initialize Supabase after a short delay to ensure the library is loaded
+            setTimeout(() => {
+                if (initializeSupabase()) {
+                    console.log("Supabase initialized on page load");
+                } else {
+                    console.log("Supabase not ready yet, will initialize when needed");
+                }
+            }, 1000);
+        });
+    </script>
+
+   <script>
         // Groq API Configuration
         const GROQ_API_KEY = "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";
         const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
@@ -2749,26 +2823,9 @@
         });
 
     </script>
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-	<script>
-  const supabase = supabase.createClient(
-    'https://eehtetwdvazzufunmrxb.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5tcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ'
-  );
+	
 
 
-    // Google OAuth login function
-    async function loginWithGoogle() {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-      });
-
-      if (error) {
-        console.error('Login error:', error.message);
-      }
-    }
-
-</script>
 
 </body>
 </html>
