@@ -1314,7 +1314,7 @@
     </div>
 
     <!-- Text Mode Interface -->
-    <div class="text-mode-container active" id="text-mode-container" style="max-width: 800px; margin: 20px auto; font-family: 'Courier New', monospace, sans-serif; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); border-radius: 8px; overflow: hidden; background-color: #0a0a12; border: 1px solid #6a0dad;">
+    <div class="text-mode-container" id="text-mode-container" style="max-width: 800px; margin: 20px auto; font-family: 'Courier New', monospace, sans-serif; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); border-radius: 8px; overflow: hidden; background-color: #0a0a12; border: 1px solid #6a0dad;">
         <div style="background: linear-gradient(90deg, #0a0a12 0%, #2a0a4a 50%, #0a0a12 100%); color: #b19cd9; padding: 16px; font-size: 18px; font-weight: 600; text-shadow: 0 0 8px #9b30ff; border-bottom: 1px solid #6a0dad; position: relative;">
             <span style="color: #9b30ff;">ASTRA</span> CyberBot
             <div style="position: absolute; right: 16px; top: 16px; display: flex; gap: 4px;">
@@ -1409,6 +1409,8 @@
         <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
         <span id="userName" class="user-name"></span>
         <button id="logoutBtn" class="logout-btn">Logout</button>
+		<button id="historyBtn" class="logout-btn" style="background-color:#555;">Chat History</button>
+
     </div>
 
 
@@ -1435,6 +1437,16 @@
     function initApp() {
         // Google OAuth configuration
         const GOOGLE_CLIENT_ID = '515316337158-6psmmhna76bc6dbm3ilbdrdassj1v2op.apps.googleusercontent.com';
+
+
+		const historyBtn = document.getElementById('historyBtn');
+		if (historyBtn) {
+			historyBtn.addEventListener('click', () => {
+				loadChatHistory();
+				textModeContainer.classList.add("active");
+				voiceInterface.style.display = "none";
+			});
+		}
 
         // DOM Elements
         const loginBtn = document.getElementById('loginBtn');
@@ -1465,6 +1477,30 @@
         function showUserProfile(user) {
             loginBtn.style.display = 'none';
             userProfile.style.display = 'flex';
+			
+			loadChatHistory();
+
+			async function loadChatHistory() {
+				const { data: { user } } = await supabase.auth.getUser();
+				if (!user) return;
+
+				const { data, error } = await supabase
+					.from('messages')
+					.select('*')
+					.eq('user_id', user.id)
+					.order('created_at', { ascending: true });
+
+				if (error) {
+					console.error("Error loading history:", error);
+					return;
+				}
+
+				messagesContainer.innerHTML = "";
+				data.forEach(msg => {
+					addMessage(msg.role, msg.content);
+				});
+			}
+
             
             // Set user info
             userName.textContent = user.user_metadata.full_name || user.email;
@@ -1645,29 +1681,44 @@
         }
 
         // Add message to text mode chat
-        function addMessage(role, content) {
-            const messageDiv = document.createElement('div');
-            messageDiv.style.animation = 'fadeIn 0.3s ease';
-            
-            if (role === 'user') {
-                messageDiv.style.alignSelf = 'flex-end';
-                messageDiv.style.backgroundColor = 'rgba(107, 0, 219, 0.2)';
-                messageDiv.style.border = '1px solid #6a0dad';
-            } else {
-                messageDiv.style.alignSelf = 'flex-start';
-                messageDiv.style.backgroundColor = 'rgba(10, 10, 18, 0.7)';
-                messageDiv.style.border = '1px solid #6a0dad';
-            }
-            
-            messageDiv.style.padding = '8px 12px';
-            messageDiv.style.borderRadius = '4px';
-            messageDiv.style.maxWidth = '80%';
-            messageDiv.style.wordWrap = 'break-word';
-            messageDiv.textContent = content;
-            
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+		async function saveMessageToSupabase(role, content) {
+			if (!supabase) return;
+			const { data: { user } } = await supabase.auth.getUser();
+			if (!user) return; // only save if logged in
+
+			const { error } = await supabase
+				.from('messages')
+				.insert([{ user_id: user.id, role, content }]);
+
+			if (error) console.error("Error saving message:", error);
+		}
+
+		function addMessage(role, content) {
+			const messageDiv = document.createElement('div');
+			messageDiv.style.animation = 'fadeIn 0.3s ease';
+
+			if (role === 'user') {
+				messageDiv.style.alignSelf = 'flex-end';
+				messageDiv.style.backgroundColor = 'rgba(107, 0, 219, 0.2)';
+				messageDiv.style.border = '1px solid #6a0dad';
+			} else {
+				messageDiv.style.alignSelf = 'flex-start';
+				messageDiv.style.backgroundColor = 'rgba(10, 10, 18, 0.7)';
+				messageDiv.style.border = '1px solid #6a0dad';
+			}
+
+			messageDiv.style.padding = '8px 12px';
+			messageDiv.style.borderRadius = '4px';
+			messageDiv.style.maxWidth = '80%';
+			messageDiv.style.wordWrap = 'break-word';
+			messageDiv.textContent = content;
+
+			messagesContainer.appendChild(messageDiv);
+			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+			// ✅ Save in Supabase
+			saveMessageToSupabase(role, content);
+		}
         
         // Data absorption animation functions
         function createDataParticle() {
@@ -2587,6 +2638,18 @@
                 voiceModeBtn.classList.add('active');
                 textModeBtn.classList.remove('active');
                 
+				voiceModeBtn.addEventListener("click", async () => {
+					const { data: { user } } = await supabase.auth.getUser();
+					if (!user) {
+						alert("Please login to use Voice Mode.");
+						return;
+					}
+					interactionMode = 'voice';
+					voiceInterface.style.display = "block";
+					textModeContainer.classList.remove("active");
+				});
+				
+				
                 // Fade out text mode, fade in voice mode
                 textModeContainer.style.opacity = '0';
                 setTimeout(() => {
