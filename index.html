@@ -1710,6 +1710,44 @@
         const chatHistoryContainer = document.getElementById('chat-history-container');
         const viewChatHistory = document.getElementById('view-chat-history');
         
+		// Check login state on page load
+		async function checkLogin() {
+			const { data: { user } } = await supabase.auth.getUser();
+
+			if (user) {
+				loginBtn.style.display = "none";
+				profileBtn.style.display = "flex"; // shows round profile button
+			} else {
+				loginBtn.style.display = "block";
+				profileBtn.style.display = "none";
+			}
+			if (user && user.user_metadata && user.user_metadata.avatar_url) {
+				profileBtn.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Profile">`;
+			}
+
+		}
+
+		// Run on page load
+		checkLogin();
+
+		// Handle login button click
+		loginBtn.addEventListener("click", async () => {
+			const { data, error } = await supabase.auth.signInWithOAuth({
+				provider: 'google',
+			});
+
+			if (error) {
+				console.error("Login failed:", error);
+				return;
+			}
+
+			// Hide login button immediately
+			loginBtn.style.display = "none";
+			profileBtn.style.display = "flex";
+		});
+
+				
+				
         // Audio player and analyzer
         let isMicrophonePaused = false;
         let initialized = false;
@@ -3215,6 +3253,5 @@
             initialized = false;
         });
     </script>
-	
 </body>
 </html>
