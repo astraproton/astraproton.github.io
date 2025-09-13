@@ -1646,11 +1646,16 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+		supabase.auth.onAuthStateChange((_event, session) => {
+			checkLogin();
+		});
+
+
         // Groq API Configuration
         const GROQ_API_KEY = "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";
         const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
         const GROQ_MODEL = "llama-3.1-8b-instant";
-        
+       
         // Conversation history
         let conversationHistory = [
             {
@@ -1716,26 +1721,18 @@
 
 			if (session && session.user) {
 				loginBtn.style.display = "none";
-				profileBtn.style.display = "flex"; // shows round profile button
+				profileBtn.style.display = "flex";
 
-				// If user has an avatar
 				if (session.user.user_metadata?.avatar_url) {
 					profileBtn.innerHTML = `<img src="${session.user.user_metadata.avatar_url}" alt="Profile">`;
 				} else {
 					profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
 				}
-				if (session.user.user_metadata?.full_name) {
-					document.querySelector("#profile-menu").insertAdjacentHTML(
-						"afterbegin",
-						`<div class="profile-menu-item"><i>👤</i> ${session.user.user_metadata.full_name}</div>`
-					);
-				}
-			
-				} else {
-					loginBtn.style.display = "block";
-					profileBtn.style.display = "none";
-				}
+			} else {
+				loginBtn.style.display = "block";
+				profileBtn.style.display = "none";
 			}
+		}
 
 
 		// Run on page load
@@ -3280,7 +3277,11 @@
             permissionGranted = false;
             initialized = false;
         });
-    </script>
-	
+   
+		document.addEventListener("DOMContentLoaded", () => {
+			checkLogin();
+		});
+
+   </script>
 </body>
 </html>
