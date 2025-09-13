@@ -1465,10 +1465,8 @@
     </div>
 
 
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js" 
-            onload="initSupabase()"
-            onerror="console.error('Supabase library failed to load')"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
     let supabase; // Declare supabase variable globally
 
@@ -1509,7 +1507,7 @@
                     // User is not logged in
                     showLoginButton();
                 }
-            }
+        }
 
 
         // Check if user is already logged in
@@ -1562,11 +1560,10 @@
 				});
 			}
 
+			document.addEventListener("DOMContentLoaded", () => {
+				initSupabase();
+			});
             
-            // Set user info
-            userName.textContent = user.user_metadata.full_name || user.email;
-            userAvatar.src = user.user_metadata.avatar_url || 'https://via.placeholder.com/40';
-        }
 
             // Show login button when not logged in
             function showLoginButton() {
@@ -1655,8 +1652,9 @@
                 });
             }
         });
-  
-</script>
+	}
+ </script>
+
    <script>
         // Groq API Configuration
         const GROQ_API_KEY = "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";
@@ -3037,16 +3035,6 @@
         });
 
     </script>
-	
 
-<script>
-    if (window.supabase) {
-        initSupabase();
-    } else {
-        document.addEventListener('DOMContentLoaded', function() {
-            initSupabase();
-        });
-    }
-	</script>
 </body>
 </html>
