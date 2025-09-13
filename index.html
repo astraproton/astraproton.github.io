@@ -39,22 +39,23 @@
         }
 
         /* Logo Container Styles */
-        .logo-container {
-            position: absolute;
-            top: 20px;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding: 0 30px;
-            box-sizing: border-box;
-            z-index: 5;
-            pointer-events: none;
-        }
-
+		.logo-container {
+			position: absolute;
+			top: 20px;
+			left: 20px;
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			z-index: 5;
+			pointer-events: none;
+			width: auto; 
+			padding: 0;   
+		}
+		
         .logo {
             height: 50px;
             width: auto;
-            opacity: 0.8;
+            opacity: 0.85;
             filter: drop-shadow(0 0 5px var(--primary));
             transition: all 0.3s ease;
         }
@@ -438,7 +439,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2rem; /* optional for spacing above controls */
+            margin-bottom: 2rem;
         }
 
         .permission-error {
@@ -616,7 +617,6 @@
             border-color: var(--success);
         }
 
-        /* Typewriter cursor */
         .typewriter-cursor {
             display: inline-block;
             width: 2px;
@@ -627,7 +627,6 @@
             animation: blink 1s step-end infinite;
         }
 
-        /* Data absorption animation elements */
         .data-particle {
             position: absolute;
             color: rgba(0, 247, 255, 0.7);
@@ -638,7 +637,6 @@
             text-shadow: 0 0 5px rgba(0, 247, 255, 0.5);
         }
 
-        /* Settings Button and Panel */
         .settings-btn {
             position: fixed;
             bottom: 20px;
@@ -748,7 +746,6 @@
             background-color: white;
         }
 
-        /* Mode Selector */
         .mode-btn {
             position: fixed;
             bottom: 20px;
@@ -823,7 +820,6 @@
             color: white;
         }
 
-        /* System Control Button */
         .system-btn {
             position: fixed;
             bottom: 20px;
@@ -898,7 +894,6 @@
             color: white;
         }
 
-        /* Text Mode Interface */
         .text-mode-container {
             position: fixed;
             top: 50%;
@@ -1011,7 +1006,6 @@
             animation: fadeIn 0.3s ease;
         }
 
-        /* Connection Status */
         .connection-status {
             position: fixed;
             top: 10px;
@@ -1038,63 +1032,182 @@
             text-shadow: 0 0 5px var(--success);
         }
 
-        /* Login Button */
-		.login-btn {
+        .login-btn {
             position: fixed;
             top: 20px;
             right: 20px;
+            background: rgba(10, 10, 18, 0.7);
+            border: 1px solid var(--primary);
+            color: var(--primary);
             padding: 10px 20px;
-            background-color: #4285F4;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
             cursor: pointer;
             z-index: 1000;
-            font-family: 'Rajdhani', sans-serif;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--primary);
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
         }
-		
-	    .user-profile {
+
+        .login-btn:hover {
+            background: rgba(0, 247, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
+        }
+
+        .profile-btn {
             position: fixed;
             top: 20px;
             right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(10, 10, 18, 0.7);
+            border: 1px solid var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-btn .default-avatar {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: rgba(10, 10, 18, 0.95);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            width: 200px;
+            padding: 0.5rem 0;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+            z-index: 1000;
+        }
+
+        .profile-menu.active {
+            display: flex;
+        }
+
+        .profile-menu-item {
+            padding: 0.8rem 1rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            gap: 10px;
-            z-index: 1000;
-            background: rgba(10, 10, 18, 0.8);
-            padding: 8px 15px;
-            border-radius: 20px;
+            gap: 0.5rem;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(0, 247, 255, 0.1);
+            color: var(--accent);
+        }
+
+        .profile-menu-item i {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .chat-history-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(10, 10, 18, 0.7);
             border: 1px solid var(--primary);
-            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
-            transition: all 0.3s ease;
-        }
-		
-		.user-avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            border: 2px solid var(--primary);
-        }
-		
-        .user-name {
             color: var(--primary);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 14px;
-            max-width: 150px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px var(--primary);
+            box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+            display: none;
+        }
+
+        .chat-history-btn:hover {
+            background: rgba(0, 247, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
+        }
+
+        .chat-history-container {
+            position: fixed;
+            top: 70px;
+            left: 20px;
+            background: rgba(10, 10, 18, 0.95);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 1000;
+            box-shadow: 0 0 20px rgba(0, 247, 255, 0.3);
+        }
+
+        .chat-history-container.active {
+            display: flex;
+        }
+
+        .chat-history-item {
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            border-left: 2px solid var(--secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .chat-history-item:hover {
+            border-left-color: var(--accent);
+            background: rgba(0, 247, 255, 0.1);
+        }
+
+        .chat-history-date {
+            font-size: 0.7rem;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .chat-history-preview {
+            font-size: 0.8rem;
+            color: var(--primary);
+            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
         }
-		
 
-
-        .login-btn:hover {
-            background-color: #357AE8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        #profile-pic-input {
+            display: none;
         }
 
         @keyframes pulse-opacity {
@@ -1191,15 +1304,6 @@
                 padding: 1rem;
             }
             
-            .boot-logo {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .boot-text {
-                font-size: 0.8rem;
-            }
-            
             .settings-btn, .mode-btn, .system-btn {
                 width: 35px;
                 height: 35px;
@@ -1235,7 +1339,6 @@
                 right: 105px;
             }
             
-            /* Text mode mobile adjustments */
             .api-input-container {
                 width: 90%;
             }
@@ -1251,73 +1354,119 @@
                 padding: 8px 16px;
                 font-size: 14px;
             }
+            
+            .profile-btn {
+                top: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .chat-history-btn {
+                top: 15px;
+                left: 15px;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .chat-history-container {
+                top: 60px;
+                left: 15px;
+                width: 250px;
+            }
         }
-    
-        .logout-btn {
-            padding: 6px 12px;
-            background-color: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
+		
+		
+			/* Boot Screen Container */
+			.boot-animation {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: #0a0a12;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				z-index: 2000;
+				transition: opacity 0.6s ease;
+			}
 
-		.logout-btn:hover {
-	    	background-color: #cc0000;
-	}
+			/* Logo */
+			.boot-logo {
+				width: 120px;
+				margin-bottom: 20px;
+				filter: drop-shadow(0 0 10px #00f7ff);
+			}
 
-        .history-btn {
-            padding: 6px 12px;
-            background-color: #555;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 12px;
-            transition: all 0.3s ease;
-        }
+			/* Progress Bar Container */
+			.boot-progress {
+				width: 60%;
+				max-width: 400px;
+				height: 12px;
+				background: rgba(255, 255, 255, 0.1);
+				border: 1px solid #00f7ff;
+				border-radius: 8px;
+				overflow: hidden;
+				margin: 20px 0;
+			}
 
-        .history-btn:hover {
-            background-color: #777;
-        }
+			/* Actual Progress Bar */
+			.boot-progress-bar {
+				width: 0%;
+				height: 100%;
+				background: linear-gradient(90deg, #00f7ff, #7700ff);
+				box-shadow: 0 0 15px #00f7ff;
+				transition: width 0.3s ease;
+			}
 
-	
-	</style>
+			/* Boot Text */
+			.boot-text {
+				font-size: 1rem;
+				color: #00f7ff;
+				margin-top: 10px;
+				text-shadow: 0 0 10px #00f7ff;
+				letter-spacing: 2px;
+				text-transform: uppercase;
+			}
+
+			/* Animated Dots */
+			.boot-dots {
+				display: flex;
+				gap: 6px;
+				margin-top: 10px;
+			}
+
+			.boot-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: #00f7ff;
+				opacity: 0.4;
+				animation: pulse 1.5s infinite;
+			}
+
+			.boot-dot:nth-child(2) { animation-delay: 0.3s; }
+			.boot-dot:nth-child(3) { animation-delay: 0.6s; }
+
+			@keyframes pulse {
+				0%, 100% { opacity: 0.3; transform: scale(1); }
+				50% { opacity: 1; transform: scale(1.3); }
+			}
+
+    </style>
 </head>
 <body>
     <div class="cyber-grid"></div>
     
-    <!-- Connection Status -->
     <div class="connection-status" id="connection-status">NO INTERNET CONNECTION</div>
     
-    
-    <!-- Boot Animation -->
-    <div class="boot-animation" id="boot-animation">
-       <img src="1234.png" class="boot-logo" alt="ASTRA Logo">
-        <div class="boot-progress">
-            <div class="boot-progress-bar" id="boot-progress"></div>
-        </div>
-        <div class="boot-text" id="boot-text">INITIALIZING AI CORE</div>
-        <div class="boot-dots">
-            <div class="boot-dot"></div>
-            <div class="boot-dot"></div>
-            <div class="boot-dot"></div>
-        </div>
-    </div>
-    
-    <!-- Logo Container -->
     <div class="logo-container">
-        <img src="iitc.png" class="logo left" id="logo-left" alt="Left Logo">
-        <img src="bafsk.png" class="logo right" id="logo-right" alt="Right Logo">
+        <img src="bafsk.png" class="logo" alt="BAFSK Logo">
     </div>
     
-    <!-- Voice Mode Interface -->
     <div class="hologram-container" id="container">
-        <!-- Outer Circles -->
         <div class="outer-circle circle-1"></div>
         <div class="outer-circle circle-2"></div>
         <div class="outer-circle circle-3"></div>
@@ -1365,7 +1514,6 @@
         </div>
     </div>
 
-    <!-- Text Mode Interface -->
     <div class="text-mode-container" id="text-mode-container" style="max-width: 800px; margin: 20px auto; font-family: 'Courier New', monospace, sans-serif; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); border-radius: 8px; overflow: hidden; background-color: #0a0a12; border: 1px solid #6a0dad;">
         <div style="background: linear-gradient(90deg, #0a0a12 0%, #2a0a4a 50%, #0a0a12 100%); color: #b19cd9; padding: 16px; font-size: 18px; font-weight: 600; text-shadow: 0 0 8px #9b30ff; border-bottom: 1px solid #6a0dad; position: relative;">
             <span style="color: #9b30ff;">ASTRA</span> CyberBot
@@ -1393,7 +1541,6 @@
         </div>
     </div>
 
-    <!-- Settings Button and Panel -->
     <button class="settings-btn" id="settings-btn" aria-label="Animation Settings">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -1426,7 +1573,6 @@
         </div>
     </div>
 
-    <!-- Mode Selector -->
     <button class="mode-btn" id="mode-btn" aria-label="Interaction Mode">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
@@ -1439,7 +1585,6 @@
         <div class="mode-option" id="text-mode">Text Mode</div>
     </div>
 
-    <!-- System Control Button -->
     <button class="system-btn" id="system-btn" aria-label="System Control">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -1454,210 +1599,55 @@
         <div class="system-option" id="reboot-btn">Reboot</div>
     </div>
 
-	 <button id="loginBtn" class="login-btn">Login with Google</button>
+    <button id="loginBtn" class="login-btn">Login with Google</button>
     
-    <!-- User Profile (hidden initially) -->
-    <div id="userProfile" class="user-profile" style="display: none;">
-        <img id="userAvatar" class="user-avatar" src="" alt="User Avatar">
-        <span id="userName" class="user-name"></span>
-        <button id="historyBtn" class="history-btn">Chat History</button>
-        <button id="logoutBtn" class="logout-btn">Logout</button>
+    <div class="profile-btn" id="profile-btn" style="display: none;">
+        <div class="default-avatar">U</div>
+    </div>
+    
+    <div class="profile-menu" id="profile-menu">
+        <div class="profile-menu-item" id="change-profile-pic">
+            <i>📷</i> Change Profile Picture
+        </div>
+        <div class="profile-menu-item" id="view-chat-history">
+            <i>📋</i> Chat History
+        </div>
+        <div class="profile-menu-item" id="logout-btn">
+            <i>🚪</i> Logout
+        </div>
+    </div>
+    
+    <input type="file" id="profile-pic-input" accept="image/*">
+    
+    <button class="chat-history-btn" id="chat-history-btn">Chat History</button>
+    
+    <div class="chat-history-container" id="chat-history-container">
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	
+	<!-- Boot Animation -->
+	<div class="boot-animation" id="boot-animation">
+		<img src="1234.png" class="boot-logo" alt="ASTRA Logo">
+		<div class="boot-progress">
+			<div class="boot-progress-bar" id="boot-progress"></div>
+		</div>
+		<div class="boot-text" id="boot-text">INITIALIZING AI CORE</div>
+		<div class="boot-dots">
+			<div class="boot-dot"></div>
+			<div class="boot-dot"></div>
+			<div class="boot-dot"></div>
+		</div>
+	</div>
 
-	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<script>
-    let supabase; // Declare supabase variable globally
-
-    function initSupabase() {
-        console.log('Supabase loaded successfully');
-        
-        // Initialize Supabase client
+    <script>
+        // Initialize Supabase
         const supabaseUrl = 'https://eehtetwdvazzufunmrxb.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ';
-        supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
-        // Now that Supabase is loaded, initialize the rest of the app
-        initApp();
-    }
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        function initApp() {
-            // DOM Elements
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const userProfile = document.getElementById('userProfile');
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-            const historyBtn = document.getElementById('historyBtn');
-
-            // Check if user is already logged in
-            async function checkAuthStatus() {
-                if (!supabase) {
-                    console.error('Supabase not initialized yet');
-                    return;
-                }
-                
-                const { data: { session } } = await supabase.auth.getSession();
-                
-                if (session && session.user) {
-                    // User is logged in
-                    showUserProfile(session.user);
-                } else {
-                    // User is not logged in
-                    showLoginButton();
-                }
-        }
-
-
-        // Check if user is already logged in
-        async function checkAuthStatus() {
-            if (!supabase) {
-                console.error('Supabase not initialized yet');
-                return;
-            }
-            
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session && session.user) {
-                // User is logged in
-                showUserProfile(session.user);
-            } else {
-                // User is not logged in
-                showLoginButton();
-            }
-        }
-
-            // Show user profile when logged in
-            function showUserProfile(user) {
-                loginBtn.style.display = 'none';
-                userProfile.style.display = 'flex';
-                
-                // Set user info
-                userName.textContent = user.user_metadata.full_name || user.email;
-                userAvatar.src = user.user_metadata.avatar_url || 'https://via.placeholder.com/40';
-            }
-
-
-			async function loadChatHistory() {
-				const { data: { user } } = await supabase.auth.getUser();
-				if (!user) return;
-
-				const { data, error } = await supabase
-					.from('messages')
-					.select('*')
-					.eq('user_id', user.id)
-					.order('created_at', { ascending: true });
-
-				if (error) {
-					console.error("Error loading history:", error);
-					return;
-				}
-
-				messagesContainer.innerHTML = "";
-				data.forEach(msg => {
-					addMessage(msg.role, msg.content);
-				});
-			}
-
-			document.addEventListener("DOMContentLoaded", () => {
-				initSupabase();
-			});
-            
-
-            // Show login button when not logged in
-            function showLoginButton() {
-                loginBtn.style.display = 'block';
-                userProfile.style.display = 'none';
-            }
-
-        // Initialize Google Sign-In
-        function initializeGoogleSignIn() {
-            // Google will automatically initialize and render the button
-            // We'll handle the login with our own button for more control
-        }
-
-            // Handle login with Google
-            async function handleGoogleLogin() {
-                if (!supabase) {
-                    console.error('Supabase not initialized yet');
-                    return;
-                }
-                
-                try {
-                    const { data, error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                            queryParams: {
-                                access_type: 'offline',
-                                prompt: 'consent',
-                            },
-                            redirectTo: window.location.origin
-                        }
-                    });
-                    
-                    if (error) throw error;
-                } catch (error) {
-                    console.error('Error signing in with Google:', error.message);
-                    alert('Login failed: ' + error.message);
-                }
-            }
-
-
-
-            // Handle login with Google
-            async function handleGoogleLogin() {
-                if (!supabase) {
-                    console.error('Supabase not initialized yet');
-                    return;
-                }
-                
-                try {
-                    const { data, error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                            queryParams: {
-                                access_type: 'offline',
-                                prompt: 'consent',
-                            },
-                            redirectTo: window.location.origin
-                        }
-                    });
-                    
-                    if (error) throw error;
-                } catch (error) {
-                    console.error('Error signing in with Google:', error.message);
-                    alert('Login failed: ' + error.message);
-                }
-            }
-
-
-        // Event listeners
-        loginBtn.addEventListener('click', handleGoogleLogin);
-        logoutBtn.addEventListener('click', handleLogout);
-
-        // Check auth status on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuthStatus();
-            initializeGoogleSignIn();
-            
-            // Listen for auth state changes
-            if (supabase) {
-                supabase.auth.onAuthStateChange((event, session) => {
-                    if (event === 'SIGNED_IN' && session) {
-                        showUserProfile(session.user);
-                    } else if (event === 'SIGNED_OUT') {
-                        showLoginButton();
-                    }
-                });
-            }
-        });
-	}
- </script>
-
-   <script>
         // Groq API Configuration
-        const GROQ_API_KEY = "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";
+        const GROQ_API_KEY = "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";
         const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
         const GROQ_MODEL = "llama-3.1-8b-instant";
         
@@ -1688,8 +1678,6 @@
         const permissionPrompt = document.getElementById('permission-prompt');
         const allowBtn = document.getElementById('allow-btn');
         const denyBtn = document.getElementById('deny-btn');
-        const logoLeft = document.getElementById('logo-left');
-        const logoRight = document.getElementById('logo-right');
         const bootAnimation = document.getElementById('boot-animation');
         const bootProgress = document.getElementById('boot-progress');
         const bootText = document.getElementById('boot-text');
@@ -1712,6 +1700,15 @@
         const systemPanel = document.getElementById('system-panel');
         const deactivateBtn = document.getElementById('deactivate-btn');
         const rebootBtn = document.getElementById('reboot-btn');
+        const loginBtn = document.getElementById('loginBtn');
+        const profileBtn = document.getElementById('profile-btn');
+        const profileMenu = document.getElementById('profile-menu');
+        const changeProfilePic = document.getElementById('change-profile-pic');
+        const profilePicInput = document.getElementById('profile-pic-input');
+        const logoutBtnElement = document.getElementById('logout-btn');
+        const chatHistoryBtn = document.getElementById('chat-history-btn');
+        const chatHistoryContainer = document.getElementById('chat-history-container');
+        const viewChatHistory = document.getElementById('view-chat-history');
         
         // Audio player and analyzer
         let isMicrophonePaused = false;
@@ -1738,10 +1735,6 @@
         // Interaction mode
         let interactionMode = 'voice'; // 'voice' or 'text'
         
-        // Set organization logos (replace with your actual logo URLs)
-        logoLeft.src = "bafsk.png";
-        logoRight.src = "iitc.png";
-        
         // Response display function
         function updateResponse(text) {
             responseEl.textContent = text;
@@ -1752,44 +1745,44 @@
         }
 
         // Add message to text mode chat
-		async function saveMessageToSupabase(role, content) {
-			if (!supabase) return;
-			const { data: { user } } = await supabase.auth.getUser();
-			if (!user) return; // only save if logged in
+        async function saveMessageToSupabase(role, content) {
+            if (!supabase) return;
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return; // only save if logged in
 
-			const { error } = await supabase
-				.from('messages')
-				.insert([{ user_id: user.id, role, content }]);
+            const { error } = await supabase
+                .from('messages')
+                .insert([{ user_id: user.id, role, content }]);
 
-			if (error) console.error("Error saving message:", error);
-		}
+            if (error) console.error("Error saving message:", error);
+        }
 
-		function addMessage(role, content) {
-			const messageDiv = document.createElement('div');
-			messageDiv.style.animation = 'fadeIn 0.3s ease';
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.style.animation = 'fadeIn 0.3s ease';
 
-			if (role === 'user') {
-				messageDiv.style.alignSelf = 'flex-end';
-				messageDiv.style.backgroundColor = 'rgba(107, 0, 219, 0.2)';
-				messageDiv.style.border = '1px solid #6a0dad';
-			} else {
-				messageDiv.style.alignSelf = 'flex-start';
-				messageDiv.style.backgroundColor = 'rgba(10, 10, 18, 0.7)';
-				messageDiv.style.border = '1px solid #6a0dad';
-			}
+            if (role === 'user') {
+                messageDiv.style.alignSelf = 'flex-end';
+                messageDiv.style.backgroundColor = 'rgba(107, 0, 219, 0.2)';
+                messageDiv.style.border = '1px solid #6a0dad';
+            } else {
+                messageDiv.style.alignSelf = 'flex-start';
+                messageDiv.style.backgroundColor = 'rgba(10, 10, 18, 0.7)';
+                messageDiv.style.border = '1px solid #6a0dad';
+            }
 
-			messageDiv.style.padding = '8px 12px';
-			messageDiv.style.borderRadius = '4px';
-			messageDiv.style.maxWidth = '80%';
-			messageDiv.style.wordWrap = 'break-word';
-			messageDiv.textContent = content;
+            messageDiv.style.padding = '8px 12px';
+            messageDiv.style.borderRadius = '4px';
+            messageDiv.style.maxWidth = '80%';
+            messageDiv.style.wordWrap = 'break-word';
+            messageDiv.textContent = content;
 
-			messagesContainer.appendChild(messageDiv);
-			messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-			// ✅ Save in Supabase
-			saveMessageToSupabase(role, content);
-		}
+            // Save in Supabase
+            saveMessageToSupabase(role, content);
+        }
         
         // Data absorption animation functions
         function createDataParticle() {
@@ -2332,14 +2325,14 @@
             prompt = sanitizeInput(prompt);
             
             addMessage('user', prompt);
-			conversationHistory.push({
-			    role: "user",
-				content: prompt
-			});
-			
-			const MAX_HISTORY = 6;
-			if (conversationHistory.length > MAX_HISTORY + 1) {
-			    conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-MAX_HISTORY)];
+            conversationHistory.push({
+                role: "user",
+                content: prompt
+            });
+            
+            const MAX_HISTORY = 6;
+            if (conversationHistory.length > MAX_HISTORY + 1) {
+                conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-MAX_HISTORY)];
             }
             try {
                 // Check for blocked topics
@@ -2709,18 +2702,18 @@
                 voiceModeBtn.classList.add('active');
                 textModeBtn.classList.remove('active');
                 
-				voiceModeBtn.addEventListener("click", async () => {
-					const { data: { user } } = await supabase.auth.getUser();
-					if (!user) {
-						alert("Please login to use Voice Mode.");
-						return;
-					}
-					interactionMode = 'voice';
-					voiceInterface.style.display = "block";
-					textModeContainer.classList.remove("active");
-				});
-				
-				
+                voiceModeBtn.addEventListener("click", async () => {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) {
+                        alert("Please login to use Voice Mode.");
+                        return;
+                    }
+                    interactionMode = 'voice';
+                    voiceInterface.style.display = "block";
+                    textModeContainer.classList.remove("active");
+                });
+                
+                
                 // Fade out text mode, fade in voice mode
                 textModeContainer.style.opacity = '0';
                 setTimeout(() => {
@@ -2783,6 +2776,150 @@
                 connectionStatus.textContent = "NO INTERNET CONNECTION";
                 connectionStatus.classList.remove('online');
                 connectionStatus.style.display = 'block';
+            }
+        }
+        
+        // Auth functions
+        async function handleGoogleLogin() {
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent',
+                        },
+                        redirectTo: window.location.origin
+                    }
+                });
+                
+                if (error) throw error;
+            } catch (error) {
+                console.error('Error signing in with Google:', error.message);
+                alert('Login failed: ' + error.message);
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                // Hide profile button, show login button
+                profileBtn.style.display = 'none';
+                loginBtn.style.display = 'block';
+                chatHistoryBtn.style.display = 'none';
+                chatHistoryContainer.classList.remove('active');
+                
+                // Reset conversation history
+                conversationHistory = [conversationHistory[0]];
+            } catch (error) {
+                console.error('Error signing out:', error.message);
+            }
+        }
+        
+        async function checkAuthStatus() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session && session.user) {
+                // User is logged in
+                loginBtn.style.display = 'none';
+                profileBtn.style.display = 'flex';
+                chatHistoryBtn.style.display = 'block';
+                
+                // Load profile picture from localStorage if available
+                const profilePic = localStorage.getItem(`astra_profile_pic_${session.user.id}`);
+                if (profilePic) {
+                    profileBtn.innerHTML = `<img src="${profilePic}" alt="Profile">`;
+                }
+            } else {
+                // User is not logged in
+                loginBtn.style.display = 'block';
+                profileBtn.style.display = 'none';
+                chatHistoryBtn.style.display = 'none';
+            }
+        }
+        
+        async function loadChatHistory() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+
+            const { data, error } = await supabase
+                .from('messages')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error("Error loading history:", error);
+                return;
+            }
+
+            // Clear messages container
+            messagesContainer.innerHTML = "";
+            
+            // Add messages to the chat
+            data.forEach(msg => {
+                addMessage(msg.role, msg.content);
+            });
+        }
+        
+        function populateChatHistory() {
+            const container = document.getElementById('chat-history-container');
+            container.innerHTML = '';
+            
+            if (conversationHistory.length === 0) {
+                container.innerHTML = '<div class="chat-history-item">No conversation history yet</div>';
+                return;
+            }
+            
+            // Filter only user messages for history
+            const userMessages = conversationHistory.filter(msg => msg.role === 'user');
+            
+            if (userMessages.length === 0) {
+                container.innerHTML = '<div class="chat-history-item">No conversation history yet</div>';
+                return;
+            }
+            
+            // Create history items
+            userMessages.forEach((msg, index) => {
+                if (index < 10) { // Show only last 10 messages
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'chat-history-item';
+                    historyItem.innerHTML = `
+                        <div class="chat-history-preview">${msg.content}</div>
+                    `;
+                    
+                    // Add click event to load this conversation
+                    historyItem.addEventListener('click', () => {
+                        // This would need more complex implementation to restore full conversation
+                        apiInput.value = msg.content;
+                    });
+                    
+                    container.appendChild(historyItem);
+                }
+            });
+        }
+        
+        function handleProfilePicChange() {
+            profilePicInput.click();
+        }
+        
+        function handleProfilePicSelected(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const imageDataUrl = e.target.result;
+                    profileBtn.innerHTML = `<img src="${imageDataUrl}" alt="Profile">`;
+                    
+                    // Save to localStorage
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                        localStorage.setItem(`astra_profile_pic_${user.id}`, imageDataUrl);
+                    }
+                };
+                reader.readAsDataURL(file);
             }
         }
         
@@ -2905,14 +3042,15 @@
             permissionRequested = false;
         });
         
-        // Settings panel event handlers with improved feedback
+        // Settings panel event handlers
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
-            // Hide mode panel if open
+            // Hide other panels if open
             modePanel.style.display = 'none';
-            // Hide system panel if open
             systemPanel.style.display = 'none';
+            profileMenu.classList.remove('active');
+            chatHistoryContainer.classList.remove('active');
             
             // Add visual feedback
             settingsBtn.classList.add('active');
@@ -2925,14 +3063,15 @@
         toggleVisualizer.addEventListener('change', updateAnimationSettings);
         toggleButtons.addEventListener('change', updateAnimationSettings);
         
-        // Mode selector event handlers with improved feedback
+        // Mode selector event handlers
         modeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             modePanel.style.display = modePanel.style.display === 'block' ? 'none' : 'block';
-            // Hide settings panel if open
+            // Hide other panels if open
             settingsPanel.style.display = 'none';
-            // Hide system panel if open
             systemPanel.style.display = 'none';
+            profileMenu.classList.remove('active');
+            chatHistoryContainer.classList.remove('active');
             
             // Add visual feedback
             modeBtn.classList.add('active');
@@ -2948,10 +3087,11 @@
         systemBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             systemPanel.style.display = systemPanel.style.display === 'block' ? 'none' : 'block';
-            // Hide settings panel if open
+            // Hide other panels if open
             settingsPanel.style.display = 'none';
-            // Hide mode panel if open
             modePanel.style.display = 'none';
+            profileMenu.classList.remove('active');
+            chatHistoryContainer.classList.remove('active');
             
             // Add visual feedback
             systemBtn.classList.add('active');
@@ -2987,6 +3127,36 @@
             }
         });
         
+        // Auth event handlers
+        loginBtn.addEventListener('click', handleGoogleLogin);
+        logoutBtnElement.addEventListener('click', handleLogout);
+        
+        // Profile event handlers
+        profileBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle('active');
+            // Hide other panels if open
+            settingsPanel.style.display = 'none';
+            modePanel.style.display = 'none';
+            systemPanel.style.display = 'none';
+            chatHistoryContainer.classList.remove('active');
+        });
+        
+        changeProfilePic.addEventListener('click', handleProfilePicChange);
+        profilePicInput.addEventListener('change', handleProfilePicSelected);
+        
+        viewChatHistory.addEventListener('click', () => {
+            populateChatHistory();
+            chatHistoryContainer.classList.toggle('active');
+            profileMenu.classList.remove('active');
+        });
+        
+        chatHistoryBtn.addEventListener('click', () => {
+            populateChatHistory();
+            chatHistoryContainer.classList.toggle('active');
+            profileMenu.classList.remove('active');
+        });
+        
         // Close panels when clicking outside
         document.addEventListener('click', (event) => {
             if (!settingsPanel.contains(event.target) && event.target !== settingsBtn) {
@@ -2999,6 +3169,14 @@
             
             if (!systemPanel.contains(event.target) && event.target !== systemBtn) {
                 systemPanel.style.display = 'none';
+            }
+            
+            if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+                profileMenu.classList.remove('active');
+            }
+            
+            if (!chatHistoryBtn.contains(event.target) && !chatHistoryContainer.contains(event.target)) {
+                chatHistoryContainer.classList.remove('active');
             }
         });
         
@@ -3018,23 +3196,25 @@
         // Check internet connection
         checkInternetConnection();
         
-        // Check if we already have permission (for page reloads)
+        // Check auth status on load
         document.addEventListener('DOMContentLoaded', () => {
-            // Do not auto-initialize system even if permission exists
-            updateStatus("SYSTEM STANDBY");
-            updateResponse(isSpeechSupported 
-                ? "Click button to initialize system" 
-                : "Voice commands are unavailable in this browser. Please enable Text Mode to continue using ASTRA."
-            );
-
+            checkAuthStatus();
+            
+            // Listen for auth state changes
+            supabase.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_IN' && session) {
+                    checkAuthStatus();
+                } else if (event === 'SIGNED_OUT') {
+                    checkAuthStatus();
+                }
+            });
         });
         
-		window.addEventListener("load", () => {
+        window.addEventListener("load", () => {
             permissionGranted = false;
             initialized = false;
         });
-
     </script>
-
+	
 </body>
 </html>
