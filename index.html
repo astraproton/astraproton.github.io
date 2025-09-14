@@ -1641,14 +1641,38 @@
 	</div>
 
     <script>
-        // Initialize Supabase
-        const supabaseUrl = 'https://eehtetwdvazzufunmrxb.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+		// Initialize Supabase
+		const supabaseUrl = 'https://eehtetwdvazzufunmrxb.supabase.co';
+		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ';
+		const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-		supabase.auth.onAuthStateChange((_event, session) => {
+		// Handle OAuth callback after redirect
+		async function handleOAuthCallback() {
+		  const { data, error } = await supabase.auth.getSession();
+		  
+		  if (data.session) {
+			// User is logged in
+			loginBtn.style.display = "none";
+			profileBtn.style.display = "flex";
+			
+			if (data.session.user.user_metadata?.avatar_url) {
+			  profileBtn.innerHTML = `<img src="${data.session.user.user_metadata.avatar_url}" alt="Profile">`;
+			} else {
+			  profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
+			}
+		  }
+		}
+
+		// Listen for auth state changes
+		supabase.auth.onAuthStateChange((event, session) => {
+		  if (event === 'SIGNED_IN' && session) {
+			// Update UI
 			checkLogin();
+		  } else if (event === 'SIGNED_OUT') {
+			checkLogin();
+		  }
 		});
+
 
 
         // Groq API Configuration
@@ -1717,38 +1741,52 @@
 
 		// Check login state on page load
 		async function checkLogin() {
+		  try {
 			const { data: { session } } = await supabase.auth.getSession();
 
 			if (session && session.user) {
-				loginBtn.style.display = "none";
-				profileBtn.style.display = "flex";
+			  loginBtn.style.display = "none";
+			  profileBtn.style.display = "flex";
 
-				if (session.user.user_metadata?.avatar_url) {
-					profileBtn.innerHTML = `<img src="${session.user.user_metadata.avatar_url}" alt="Profile">`;
-				} else {
-					profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
-				}
+			  if (session.user.user_metadata?.avatar_url) {
+				profileBtn.innerHTML = `<img src="${session.user.user_metadata.avatar_url}" alt="Profile">`;
+			  } else {
+				profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
+			  }
 			} else {
-				loginBtn.style.display = "block";
-				profileBtn.style.display = "none";
+			  loginBtn.style.display = "block";
+			  profileBtn.style.display = "none";
 			}
+		  } catch (error) {
+			console.error("Error checking login status:", error);
+		  }
 		}
-
 
 		// Run on page load
 		checkLogin();
 
 		// Handle login button click
 		loginBtn.addEventListener("click", async () => {
-			const { error } = await supabase.auth.signInWithOAuth({
-				provider: 'google',
-			});
-
-			if (error) {
-				console.error("Login failed:", error);
+		  // Show loading state
+		  loginBtn.textContent = "Redirecting...";
+		  loginBtn.disabled = true;
+		  
+		  const { error } = await supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: {
+			  redirectTo: window.location.href
 			}
-		});
+		  });
 
+		  if (error) {
+			console.error("Login failed:", error);
+			loginBtn.textContent = "Login with Google";
+			loginBtn.disabled = false;
+		  }
+		});
+		
+		
+		
 		// Handle logout
 		logoutBtnElement.addEventListener("click", async () => {
 			await supabase.auth.signOut();
@@ -1768,9 +1806,19 @@
 		});
 
 		document.addEventListener("DOMContentLoaded", () => {
-			checkLogin();
-		});
-
+		  // Check for OAuth callback
+		  handleOAuthCallback();
+		  checkLogin();
+		  
+		  // Listen for auth state changes
+		  supabase.auth.onAuthStateChange((event, session) => {
+			if (event === 'SIGNED_IN' && session) {
+			  checkLogin();
+			} else if (event === 'SIGNED_OUT') {
+			  checkLogin();
+			}
+		  });
+		});        
 
 				
         // Audio player and analyzer
@@ -2880,29 +2928,7 @@
                 console.error('Error signing out:', error.message);
             }
         }
-        
-        async function checkAuthStatus() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session && session.user) {
-                // User is logged in
-                loginBtn.style.display = 'none';
-                profileBtn.style.display = 'flex';
-                chatHistoryBtn.style.display = 'block';
                 
-                // Load profile picture from localStorage if available
-                const profilePic = localStorage.getItem(`astra_profile_pic_${session.user.id}`);
-                if (profilePic) {
-                    profileBtn.innerHTML = `<img src="${profilePic}" alt="Profile">`;
-                }
-            } else {
-                // User is not logged in
-                loginBtn.style.display = 'block';
-                profileBtn.style.display = 'none';
-                chatHistoryBtn.style.display = 'none';
-            }
-        }
-        
         async function loadChatHistory() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
@@ -3261,14 +3287,14 @@
         
         // Check auth status on load
         document.addEventListener('DOMContentLoaded', () => {
-            checkAuthStatus();
+            checkLogin();
             
             // Listen for auth state changes
             supabase.auth.onAuthStateChange((event, session) => {
                 if (event === 'SIGNED_IN' && session) {
-                    checkAuthStatus();
+                    checkLogin();
                 } else if (event === 'SIGNED_OUT') {
-                    checkAuthStatus();
+                    checkLogin();
                 }
             });
         });
@@ -3277,11 +3303,7 @@
             permissionGranted = false;
             initialized = false;
         });
-   
-		document.addEventListener("DOMContentLoaded", () => {
-			checkLogin();
-		});
-
-   </script>
+		
+   </script>  
 </body>
 </html>
