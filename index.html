@@ -1839,19 +1839,25 @@
 			await supabase.auth.signOut();
 			checkLogin(); // reset UI to login button
 		});
-				
+						
 		// Toggle profile menu when profile button is clicked
-		profileBtn.addEventListener("click", () => {
+		profileBtn.addEventListener("click", (e) => {
+			e.stopPropagation();
 			profileMenu.classList.toggle("active");
-		});
-		
-		// Close profile menu when clicking outside
-		document.addEventListener("click", (e) => {
-			if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
-				profileMenu.classList.remove("active");
-			}
+			
+			// Hide other panels if open
+			settingsPanel.style.display = 'none';
+			modePanel.style.display = 'none';
+			systemPanel.style.display = 'none';
+			chatHistoryContainer.classList.remove('active');
 		});
 
+		// Close profile menu when clicking outside
+		document.addEventListener('click', (event) => {
+			if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
+				profileMenu.classList.remove('active');
+			}
+		});
         document.addEventListener("DOMContentLoaded", async () => {
             console.log("DOM loaded, initializing...");
             
