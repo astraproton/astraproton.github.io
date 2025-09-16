@@ -1840,18 +1840,6 @@
 			checkLogin(); // reset UI to login button
 		});
 						
-		// Toggle profile menu when profile button is clicked
-		profileBtn.addEventListener("click", (e) => {
-			e.stopPropagation();
-			profileMenu.classList.toggle("active");
-			
-			// Hide other panels if open
-			settingsPanel.style.display = 'none';
-			modePanel.style.display = 'none';
-			systemPanel.style.display = 'none';
-			chatHistoryContainer.classList.remove('active');
-		});
-
 		// Close profile menu when clicking outside
 		document.addEventListener('click', (event) => {
 			if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
