@@ -1607,13 +1607,13 @@
     
     <div class="profile-menu" id="profile-menu">
         <div class="profile-menu-item" id="change-profile-pic">
-            <i>📷</i> Change Profile Picture
+            <i>•</i> Change Profile Picture
         </div>
         <div class="profile-menu-item" id="view-chat-history">
-            <i>📋</i> Chat History
+            <i>•</i> Chat History
         </div>
         <div class="profile-menu-item" id="logout-btn">
-            <i>🚪</i> Logout
+            <i>•</i> Logout
         </div>
     </div>
     
@@ -1643,38 +1643,61 @@
     <script>
 		// Initialize Supabase
 		const supabaseUrl = 'https://eehtetwdvazzufunmrxb.supabase.co';
-		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhbmFzZSIsInJlZiI6ImVlaHRldHdkdmF6enVmdW5mcnhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxMzE4NzgsImV4cCI6MjA3MjcwNzg3OH0.p44klTLD_nfbX6BloJ7YrPNrHvnAvFBbK41naveFeIQ';
+		const supabaseKey = 'sb_publishable_hv69ZXzCxNauvAiJ08EgJg_3SmGSzIC';
 		const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-		// Handle OAuth callback after redirect
-		async function handleOAuthCallback() {
-		  const { data, error } = await supabase.auth.getSession();
-		  
-		  if (data.session) {
-			// User is logged in
-			loginBtn.style.display = "none";
-			profileBtn.style.display = "flex";
+       async function handleOAuthCallback() {
+            // Check if we're in an OAuth callback
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const code = urlParams.get('code');
+            
+            if (error) {
+                console.error("OAuth error:", error);
+                alert(`Authentication error: ${error}`);
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+            
+            if (code) {
+                try {
+                    console.log("Processing OAuth callback with code");
+                    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+                    
+                    if (error) {
+                        console.error("OAuth callback error:", error.message);
+                        return;
+                    }
+                    
+                    if (data?.session) {
+                        console.log("OAuth successful, user:", data.session.user);
+                        saveLoginState(data.session.user);
+                        updateUIForLoggedInUser(data.session.user);
+                        
+                        // Clean URL after successful auth
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (err) {
+                    console.error("Error in OAuth callback:", err);
+                }
+            }
+        }
+
+
+        function updateUIForLoggedInUser(user) {
+            loginBtn.style.display = "none";
+            profileBtn.style.display = "flex";
+            chatHistoryBtn.style.display = "block";
+
+            if (user.user_metadata?.avatar_url) {
+                profileBtn.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Profile">`;
+            } else {
+                profileBtn.innerHTML = `<div class="default-avatar">${user.email ? user.email[0].toUpperCase() : 'U'}</div>`;
+            }
 			
-			if (data.session.user.user_metadata?.avatar_url) {
-			  profileBtn.innerHTML = `<img src="${data.session.user.user_metadata.avatar_url}" alt="Profile">`;
-			} else {
-			  profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
-			}
-		  }
-		}
-
-		// Listen for auth state changes
-		supabase.auth.onAuthStateChange((event, session) => {
-		  if (event === 'SIGNED_IN' && session) {
-			// Update UI
-			checkLogin();
-		  } else if (event === 'SIGNED_OUT') {
-			checkLogin();
-		  }
-		});
-
-
-
+			loadChatHistory();
+        }
         // Groq API Configuration
         const GROQ_API_KEY = "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";
         const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
@@ -1738,29 +1761,64 @@
         const chatHistoryBtn = document.getElementById('chat-history-btn');
         const chatHistoryContainer = document.getElementById('chat-history-container');
         const viewChatHistory = document.getElementById('view-chat-history');
+	
+
+	// Toggle chat history when button clicked
+		chatHistoryBtn.addEventListener("click", async () => {
+		  chatHistoryContainer.classList.toggle("active");
+		  if (chatHistoryContainer.classList.contains("active")) {
+			await loadChatHistory();
+		  }
+		});
+
+		// Also allow opening from profile menu
+		viewChatHistory.addEventListener("click", async () => {
+		  chatHistoryContainer.classList.toggle("active");
+		  if (chatHistoryContainer.classList.contains("active")) {
+			await loadChatHistory();
+		  }
+		});
+
+		
+		
 
 		// Check login state on page load
-		async function checkLogin() {
-		  try {
-			const { data: { session } } = await supabase.auth.getSession();
+        async function checkLogin() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    console.error("Error checking session:", error);
+                    return;
+                }
 
-			if (session && session.user) {
-			  loginBtn.style.display = "none";
-			  profileBtn.style.display = "flex";
+                if (session && session.user) {
+                    console.log("User is logged in:", session.user);
+                    updateUIForLoggedInUser(session.user);
+                } else {
+                    console.log("No active session");
+                    loginBtn.style.display = "block";
+                    profileBtn.style.display = "none";
+                    chatHistoryBtn.style.display = "none";
+                }
+            } catch (error) {
+                console.error("Error checking login status:", error);
+            }
+        }
 
-			  if (session.user.user_metadata?.avatar_url) {
-				profileBtn.innerHTML = `<img src="${session.user.user_metadata.avatar_url}" alt="Profile">`;
-			  } else {
-				profileBtn.innerHTML = `<div class="default-avatar">U</div>`;
-			  }
-			} else {
-			  loginBtn.style.display = "block";
-			  profileBtn.style.display = "none";
-			}
-		  } catch (error) {
-			console.error("Error checking login status:", error);
-		  }
+		// Local storage helpers
+		function saveLoginState(user) {
+		  localStorage.setItem("loginState", JSON.stringify({ isLoggedIn: true, user }));
 		}
+
+		function checkLocalStorageLogin() {
+		  return JSON.parse(localStorage.getItem("loginState")) || null;
+		}
+
+		function removeLoginState() {
+		  localStorage.removeItem("loginState");
+		}
+
 
 		// Run on page load
 		checkLogin();
@@ -1805,20 +1863,35 @@
 			}
 		});
 
-		document.addEventListener("DOMContentLoaded", () => {
-		  // Check for OAuth callback
-		  handleOAuthCallback();
-		  checkLogin();
+        document.addEventListener("DOMContentLoaded", async () => {
+            console.log("DOM loaded, initializing...");
+            
+            // Initialize auth listener
+            initializeAuthListener();
+            
+            // Check for OAuth callback
+            await handleOAuthCallback();
+            
+            // Check initial login state
+            await checkLogin();
+            
+          
+        });
 		  
 		  // Listen for auth state changes
-		  supabase.auth.onAuthStateChange((event, session) => {
-			if (event === 'SIGNED_IN' && session) {
-			  checkLogin();
-			} else if (event === 'SIGNED_OUT') {
-			  checkLogin();
-			}
-		  });
-		});        
+        function initializeAuthListener() {
+            supabase.auth.onAuthStateChange((event, session) => {
+                console.log("Auth state changed:", event, session);
+                
+                if (event === 'SIGNED_IN' && session) {
+                    updateUIForLoggedInUser(session.user);
+                } else if (event === 'SIGNED_OUT') {
+                    loginBtn.style.display = "block";
+                    profileBtn.style.display = "none";
+                    chatHistoryBtn.style.display = "none";
+                }
+            });
+        }
 
 				
         // Audio player and analyzer
@@ -1867,6 +1940,41 @@
 
             if (error) console.error("Error saving message:", error);
         }
+
+
+			// Fetch and display chat history for the logged-in user
+			async function loadChatHistory() {
+			  const { data: { user } } = await supabase.auth.getUser();
+			  if (!user) return;
+
+			  const { data, error } = await supabase
+				.from('messages')
+				.select("id, role, content, created_at")
+				.eq("user_id", user.id)
+				.order("created_at", { ascending: false })
+				.limit(20);
+
+			  if (error) {
+				console.error("Error loading chat history:", error);
+				return;
+			  }
+
+			  // Clear old list
+			  chatHistoryContainer.innerHTML = "";
+
+			  data.forEach(msg => {
+				const item = document.createElement("div");
+				item.classList.add("chat-history-item");
+
+				item.innerHTML = `
+				  <div class="chat-history-date">${new Date(msg.created_at).toLocaleString()}</div>
+				  <div class="chat-history-preview"><strong>${msg.role}:</strong> ${msg.content}</div>
+				`;
+
+				chatHistoryContainer.appendChild(item);
+			  });
+			}
+
 
         function addMessage(role, content) {
             const messageDiv = document.createElement('div');
@@ -2893,20 +3001,28 @@
         // Auth functions
         async function handleGoogleLogin() {
             try {
+                // Show loading state
+                loginBtn.textContent = "Redirecting...";
+                loginBtn.disabled = true;
+                
                 const { data, error } = await supabase.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
+                        redirectTo: window.location.origin + window.location.pathname,
                         queryParams: {
                             access_type: 'offline',
                             prompt: 'consent',
-                        },
-                        redirectTo: window.location.origin
+                        }
                     }
                 });
                 
-                if (error) throw error;
+                if (error) {
+                    throw error;
+                }
             } catch (error) {
                 console.error('Error signing in with Google:', error.message);
+                loginBtn.textContent = "Login with Google";
+                loginBtn.disabled = false;
                 alert('Login failed: ' + error.message);
             }
         }
@@ -2921,9 +3037,12 @@
                 loginBtn.style.display = 'block';
                 chatHistoryBtn.style.display = 'none';
                 chatHistoryContainer.classList.remove('active');
+                profileMenu.classList.remove('active');
                 
                 // Reset conversation history
                 conversationHistory = [conversationHistory[0]];
+                
+                console.log("User logged out successfully");
             } catch (error) {
                 console.error('Error signing out:', error.message);
             }
