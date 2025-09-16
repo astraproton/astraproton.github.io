@@ -3348,12 +3348,6 @@
             profileMenu.classList.remove('active');
         });
         
-        chatHistoryBtn.addEventListener('click', () => {
-            populateChatHistory();
-            chatHistoryContainer.classList.toggle('active');
-            profileMenu.classList.remove('active');
-        });
-        
         // Close panels when clicking outside
         document.addEventListener('click', (event) => {
             if (!settingsPanel.contains(event.target) && event.target !== settingsBtn) {
