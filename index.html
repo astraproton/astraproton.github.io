@@ -1619,8 +1619,6 @@
     
     <input type="file" id="profile-pic-input" accept="image/*">
     
-    <button class="chat-history-btn" id="chat-history-btn">Chat History</button>
-    
     <div class="chat-history-container" id="chat-history-container">
     </div>
 
@@ -1688,7 +1686,6 @@
         function updateUIForLoggedInUser(user) {
             loginBtn.style.display = "none";
             profileBtn.style.display = "flex";
-            chatHistoryBtn.style.display = "block";
 
             if (user.user_metadata?.avatar_url) {
                 profileBtn.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Profile">`;
@@ -1763,22 +1760,14 @@
         const viewChatHistory = document.getElementById('view-chat-history');
 	
 
-	// Toggle chat history when button clicked
-		chatHistoryBtn.addEventListener("click", async () => {
-		  chatHistoryContainer.classList.toggle("active");
-		  if (chatHistoryContainer.classList.contains("active")) {
-			await loadChatHistory();
-		  }
-		});
-
-		// Also allow opening from profile menu
+		// Handle chat history from profile menu
 		viewChatHistory.addEventListener("click", async () => {
 		  chatHistoryContainer.classList.toggle("active");
+		  profileMenu.classList.remove("active");
 		  if (chatHistoryContainer.classList.contains("active")) {
 			await loadChatHistory();
 		  }
 		});
-
 		
 		
 
