@@ -2207,11 +2207,7 @@
         }
         
         function shouldBlockResponse(prompt) {
-            const blockedTopics = [
-                'religion', 'god', 'allah', 'jesus', 'bible', 'quran',
-                'politics', 'democrat', 'republican', 'election', 'trump', 'biden',
-                'code', 'programming', 'script', 'function', 'algorithm'
-            ];
+            const blockedTopics = [];
             
             return blockedTopics.some(topic => 
                 prompt.toLowerCase().includes(topic)
