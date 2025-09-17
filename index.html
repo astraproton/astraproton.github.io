@@ -1543,7 +1543,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	
-	<!-- Boot Animation -->
 	<div class="boot-animation" id="boot-animation">
 		<img src="1234.png" class="boot-logo" alt="ASTRA Logo">
 		<div class="boot-progress">
@@ -1560,13 +1559,11 @@
     <script>
 		let isLoggedIn = false;
 
-	// Initialize Supabase
 		const supabaseUrl = 'https://eehtetwdvazzufunmrxb.supabase.co';
 		const supabaseKey = 'sb_publishable_hv69ZXzCxNauvAiJ08EgJg_3SmGSzIC';
 		const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
        async function handleOAuthCallback() {
-            // Check if we're in an OAuth callback
             const urlParams = new URLSearchParams(window.location.search);
             const error = urlParams.get('error');
             const code = urlParams.get('code');
@@ -1574,7 +1571,6 @@
             if (error) {
                 console.error("OAuth error:", error);
                 alert(`Authentication error: ${error}`);
-                // Clean URL
                 window.history.replaceState({}, document.title, window.location.pathname);
                 return;
             }
@@ -1594,7 +1590,6 @@
                         saveLoginState(data.session.user);
                         updateUIForLoggedInUser(data.session.user);
                         
-                        // Clean URL after successful auth
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
                 } catch (err) {
@@ -1604,24 +1599,27 @@
         }
 
 
-        function updateUIForLoggedInUser(user) {
-            loginBtn.style.display = "none";
-            profileBtn.style.display = "flex";
-
-            if (user.user_metadata?.avatar_url) {
-                profileBtn.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Profile">`;
-            } else {
-                profileBtn.innerHTML = `<div class="default-avatar">${user.email ? user.email[0].toUpperCase() : 'U'}</div>`;
-            }
+		function updateUIForLoggedInUser(user) {
+			loginBtn.style.display = "none";
+			profileBtn.style.display = "flex";
+			const savedProfilePic = localStorage.getItem('astra_profile_pic');
+			if (savedProfilePic) {
+				profileBtn.innerHTML = `<img src="${savedProfilePic}" alt="Profile">`;
+			} else if (user.user_metadata?.profile_picture) {
+				profileBtn.innerHTML = `<img src="${user.user_metadata.profile_picture}" alt="Profile">`;
+				localStorage.setItem('astra_profile_pic', user.user_metadata.profile_picture);
+			} else if (user.user_metadata?.avatar_url) {
+				profileBtn.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Profile">`;
+			} else {
+				profileBtn.innerHTML = `<div class="default-avatar">${user.email ? user.email[0].toUpperCase() : 'U'}</div>`;
+			}
 			
-			loadChatHistory();
-        }
-        // Groq API Configuration
+		}
+
         const GROQ_API_KEY = "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";
         const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
         const GROQ_MODEL = "llama-3.1-8b-instant";
        
-        // Conversation history
 		let conversationHistory = [
 			{
 				role: "system",
@@ -1630,7 +1628,6 @@
 		];
 
         
-        // DOM Elements
         const container = document.getElementById('container');
         const core = document.getElementById('core');
         const responseEl = document.getElementById('response');
@@ -1676,7 +1673,6 @@
         
 	
 
-		// Check login state on page load
         async function checkLogin() {
             try {
                 const { data: { session }, error } = await supabase.auth.getSession();
@@ -1774,32 +1770,26 @@
         }
 
 				
-        // Audio player and analyzer
         let isMicrophonePaused = false;
         let initialized = false;
         let permissionGranted = false;
 
-        // Typewriter effect variables
         let typewriterQueue = [];
         let isTyping = false;
         let currentTypingTimeout;
-        let typewriterSpeed = 30; // ms per character
+        let typewriterSpeed = 30;
         
-        // Data absorption animation variables
         let dataParticles = [];
         let particleInterval;
         
-        // Animation settings
         let animationsEnabled = {
             particles: true,
             visualizer: true,
             buttons: true
         };
         
-        // Interaction mode
-        let interactionMode = 'voice'; // 'voice' or 'text'
+        let interactionMode = 'voice';
         
-        // Response display function
         function updateResponse(text) {
             responseEl.textContent = text;
             responseEl.style.borderColor = "var(--secondary)";
@@ -1835,41 +1825,34 @@
 
         }
         
-        // Data absorption animation functions
         function createDataParticle() {
             if (!animationsEnabled.particles) return;
             
             const particle = document.createElement('div');
             particle.className = 'data-particle';
             
-            // Random character (A-Z, 0-9)
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             particle.textContent = chars.charAt(Math.floor(Math.random() * chars.length));
             
-            // Random starting position around the largest circle
             const angle = Math.random() * Math.PI * 2;
             const radius = container.offsetWidth / 2;
             const startX = Math.cos(angle) * radius;
             const startY = Math.sin(angle) * radius;
             
-            // End position at the core
             const endX = 0;
             const endY = 0;
             
-            // Set CSS variables for animation
             particle.style.setProperty('--start-x', `${startX}px`);
             particle.style.setProperty('--start-y', `${startY}px`);
             particle.style.setProperty('--end-x', `${endX}px`);
             particle.style.setProperty('--end-y', `${endY}px`);
             
-            // Random duration between 2-4 seconds
             const duration = 2 + Math.random() * 2;
             
             particle.style.animation = `dataParticle ${duration}s linear forwards`;
             
             container.appendChild(particle);
             
-            // Remove particle after animation completes
             setTimeout(() => {
                 particle.remove();
             }, duration * 1000);
@@ -1880,7 +1863,6 @@
         function startDataAbsorption() {
             if (!animationsEnabled.particles) return;
             
-            // Create particles at regular intervals
             particleInterval = setInterval(() => {
                 if (isProcessing) {
                     createDataParticle();
@@ -1892,11 +1874,9 @@
             clearInterval(particleInterval);
         }
         
-        // Microphone permission observer
         let permissionStatus;
         function setupPermissionObserver() {
             if (!navigator.permissions) {
-                // Fallback to polling if Permissions API not available
                 console.log("Permissions API not available, falling back to polling");
                 const pollInterval = setInterval(() => {
                     if (initialized && permissionGranted) {
@@ -1916,11 +1896,10 @@
                 .then(status => {
                     permissionStatus = status;
                     permissionStatus.onchange = handlePermissionChange;
-                    handlePermissionChange(); // Initial check
+                    handlePermissionChange();
                 })
                 .catch(err => {
                     console.log("Permissions API error, falling back to polling", err);
-                    // Fallback to polling if Permissions API fails
                     const pollInterval = setInterval(() => {
                         if (initialized && permissionGranted) {
                             navigator.mediaDevices.enumerateDevices()
@@ -1952,7 +1931,6 @@
                 micBtn.classList.add('error');
                 pauseBtn.disabled = true;
                 
-                // Show mobile help if on mobile
                 if (/Mobi|Android/i.test(navigator.userAgent)) {
                     mobileHelp.style.display = 'block';
                     setTimeout(() => {
@@ -1960,10 +1938,8 @@
                     }, 10000);
                 }
                 
-                // Try to reacquire permission after delay
                 setTimeout(initializeSystem, 2000);
             } else if (permissionStatus.state === 'granted' && !permissionGranted) {
-                // Permission was granted outside our flow (e.g., browser settings)
                 permissionGranted = true;
                 initializeSystem();
             }
@@ -1983,7 +1959,6 @@
             micBtn.classList.add('warning');
             pauseBtn.disabled = true;
             
-            // Try to recheck devices after delay
             setTimeout(() => {
                 navigator.mediaDevices.enumerateDevices()
                     .then(devices => {
@@ -1995,13 +1970,10 @@
             }, 5000);
         }
         
-        // Boot-Up Initialization Animation
         function runBootAnimation() {
-            // Hide main interface during boot
             container.style.opacity = '0';
             textModeContainer.style.opacity = '0';
             
-            // Simulate boot sequence
             const bootMessages = [
                 "INITIALIZING AI CORE",
                 "LOADING NEURAL NETWORKS",
@@ -2017,7 +1989,6 @@
                 const progress = Math.min(currentStep / totalSteps, 1);
                 bootProgress.style.width = `${progress * 100}%`;
                 
-                // Update boot text at certain intervals
                 if (currentStep === 20) bootText.textContent = bootMessages[1];
                 if (currentStep === 40) bootText.textContent = bootMessages[2];
                 if (currentStep === 60) bootText.textContent = bootMessages[3];
@@ -2030,18 +2001,15 @@
                         setTimeout(() => {
                             bootAnimation.style.display = 'none';
                             container.style.opacity = '1';
-                            // Show settings and mode buttons after boot
                             settingsBtn.style.display = 'flex';
                             modeBtn.style.display = 'flex';
                             systemBtn.style.display = 'flex';
-                            // Load settings from localStorage
                             loadSettings();
                         }, 1000);
                     }, 500);
                 }
             }, 30);
             
-            // Check for TTS voices during boot
             const checkVoices = () => {
                 const voices = synth.getVoices();
                 if (voices.length > 0) {
@@ -2051,17 +2019,14 @@
             };
             
             const voiceCheckInterval = setInterval(checkVoices, 500);
-            checkVoices(); // Initial check
-            
-            // Also listen for voiceschanged event
+            checkVoices();
+           
             synth.onvoiceschanged = checkVoices;
         }
         
-        // Typewriter Effect
         function typewriterEffect(text, callback) {
             if (!text || typeof text !== 'string') return;
             
-            // Add to queue if already typing
             if (isTyping) {
                 typewriterQueue.push({ text, callback });
                 return;
@@ -2069,21 +2034,18 @@
             
             isTyping = true;
             let i = 0;
-            responseEl.innerHTML = ''; // Clear previous content
+            responseEl.innerHTML = '';
             
             function type() {
                 if (i < text.length) {
-                    // Add cursor during typing
                     responseEl.innerHTML = text.substring(0, i) + '<span class="typewriter-cursor"></span>';
                     i++;
                     currentTypingTimeout = setTimeout(type, typewriterSpeed);
                 } else {
-                    // Done typing
-                    responseEl.innerHTML = text; // Remove cursor
+                    responseEl.innerHTML = text;
                     isTyping = false;
                     if (callback) callback();
                     
-                    // Process next in queue if any
                     if (typewriterQueue.length > 0) {
                         const next = typewriterQueue.shift();
                         setTimeout(() => typewriterEffect(next.text, next.callback), 200);
@@ -2094,18 +2056,15 @@
             type();
         }
         
-        // Override updateResponse to use typewriter effect
         const originalUpdateResponse = updateResponse;
         updateResponse = function(text) {
             typewriterEffect(text);
-            // Still update the border color as before
             responseEl.style.borderColor = "var(--secondary)";
             setTimeout(() => {
                 responseEl.style.borderColor = "var(--accent)";
             }, 500);
         };
         
-        // Check if speech recognition is available
         const isSpeechSupported = ('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window);
         
         if (!isSpeechSupported) {
@@ -2118,7 +2077,6 @@
             updateStatus("BROWSER INCOMPATIBLE", true);
         }
         
-        // Speech Recognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition;
         
@@ -2129,31 +2087,28 @@
             recognition.lang = 'en-US';
         }
         
-        // Speech Synthesis
         const synth = window.speechSynthesis;
         let speechQueue = [];
         let isSpeaking = false;
         let currentUtterance = null;
         
-        // State
         let isActive = false;
         let isProcessing = false;
         const wakeWord = "activate";
         const standbyWord = "deactivate";
         let permissionRequested = false;
         
-        // Functions
         function updateStatus(text, isError = false, isProcessing = false) {
             statusEl.textContent = text;
-            statusEl.className = 'status'; // Reset classes
+            statusEl.className = 'status';
             
             if (isError) {
                 statusEl.classList.add('error');
             } else if (isProcessing) {
                 statusEl.classList.add('processing');
-                startDataAbsorption(); // Start data absorption animation when processing
+                startDataAbsorption();
             } else {
-                stopDataAbsorption(); // Stop animation when not processing
+                stopDataAbsorption();
                 if (text === "ACTIVE" || text === "SYSTEM READY") {
                     statusEl.classList.add('active');
                 }
@@ -2165,7 +2120,6 @@
                 statusEl.style.animation = "none";
             }
             
-            // Update wake hint visibility based on conditions
             if (initialized && permissionGranted && !isActive && interactionMode === 'voice') {
                 wakeHint.style.display = 'block';
             } else {
@@ -2198,10 +2152,8 @@
             currentUtterance.pitch = 0.9;
             currentUtterance.volume = 1.0;
             
-            // Find a suitable voice
             const voices = synth.getVoices();
             if (voices.length > 0) {
-                // Try to find a male voice first
                 const maleVoice = voices.find(voice => 
                     voice.name.toLowerCase().includes('male') || 
                     voice.name.toLowerCase().includes('man')
@@ -2251,7 +2203,6 @@
         }
         
         function sanitizeInput(input) {
-            // Remove any potentially harmful characters or scripts
             return input.replace(/[<>"'`]/g, '');
         }
         
@@ -2268,15 +2219,12 @@
         }
         
         function handleIntent(responseText) {
-            // Check for intent tags at the end of the response
             if (responseText.includes("#intent:")) {
                 const intent = responseText.split("#intent:")[1].trim();
                 const cleanResponse = responseText.split("#intent:")[0].trim();
                 
-                // Update response display with clean text (without intent tag)
                 updateResponse(cleanResponse);
                 
-                // Handle the intent
                 switch(intent) {
                     case "deactivate":
                         isActive = false;
@@ -2284,7 +2232,6 @@
                         updateStatus("STANDBY");
                         break;
                     case "restart":
-                        // Trigger system restart
                         restartSystem();
                         break;
                 }
@@ -2298,20 +2245,17 @@
         async function queryAI(prompt) {
             if (!prompt || typeof prompt !== 'string') return "Invalid input";
             
-            // Sanitize input before processing
             prompt = sanitizeInput(prompt);
             
             updateStatus("PROCESSING", false, true);
             updateResponse("Processing request...");
             
-            // Add user message to history
             conversationHistory.push({
                 role: "user",
                 content: prompt
             });
 
             try {
-                // Check for blocked topics
                 if (shouldBlockResponse(prompt)) {
                     return "I don't discuss that topic.";
                 }
@@ -2341,10 +2285,8 @@
                 const data = await response.json();
                 let aiResponse = data.choices[0].message.content.trim();
                 
-                // Handle any intents in the response
                 aiResponse = handleIntent(aiResponse);
                 
-                // Add AI response to history (keeping last 6 exchanges)
                 conversationHistory.push({
                     role: "assistant",
                     content: aiResponse
@@ -2368,11 +2310,9 @@
             }
         }
         
-        // API Query Function for Text Mode
         async function queryAPI(prompt) {
             if (!prompt || typeof prompt !== 'string') return "Invalid input";
             
-            // Sanitize input before processing
             prompt = sanitizeInput(prompt);
             
             addMessage('user', prompt);
@@ -2386,7 +2326,6 @@
                 conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-MAX_HISTORY)];
             }
             try {
-                // Check for blocked topics
                 if (shouldBlockResponse(prompt)) {
                     addMessage('assistant', "I don't discuss that topic.");
                     return;
@@ -2417,10 +2356,8 @@
                 const data = await response.json();
                 let aiResponse = data.choices[0].message.content.trim();
                 
-                // Handle any intents in the response
                 aiResponse = handleIntent(aiResponse);
                 
-                // Add AI response to history (keeping last 6 exchanges)
                 conversationHistory.push({
                     role: "assistant",
                     content: aiResponse
@@ -2445,10 +2382,8 @@
             pauseBtn.disabled = false;
             micBtn.textContent = "CHECKING...";
             
-            // Show visual feedback
             container.classList.add('voice-active');
             
-            // First check if we have any audio input devices
             navigator.mediaDevices.enumerateDevices()
                 .then(devices => {
                     const hasAudioInput = devices.some(device => device.kind === 'audioinput');
@@ -2456,11 +2391,9 @@
                         throw new Error("No audio input devices");
                     }
                     
-                    // Now request permission
                     return navigator.mediaDevices.getUserMedia({ audio: true });
                 })
                 .then(stream => {
-                    // Immediately stop using the stream (we just needed permission)
                     stream.getTracks().forEach(track => track.stop());
                     
                     permissionGranted = true;
@@ -2473,7 +2406,6 @@
                     updateStatus("STANDBY");
                     updateResponse("Say 'ACTIVATE' to begin");
                     
-                    // Start listening for wake word
                     try {
                         recognition.start();
                     } catch (e) {
@@ -2486,7 +2418,6 @@
                     
                     container.classList.remove('voice-active');
                     
-                    // Start permission observer now that we're initialized
                     setupPermissionObserver();
                 })
                 .catch(error => {
@@ -2499,14 +2430,12 @@
                     if (error.message === "No audio input devices") {
                         handleNoAudioDevices();
                     } else if (error.name === 'NotAllowedError') {
-                        // User denied permission
                         showPermissionError();
                         updateStatus("PERMISSION DENIED", true);
                         updateResponse("Microphone access required");
                         micBtn.textContent = "INITIALIZE SYSTEM";
                         micBtn.classList.add('error');
                         
-                        // Show mobile help if on mobile
                         if (/Mobi|Android/i.test(navigator.userAgent)) {
                             mobileHelp.style.display = 'block';
                             setTimeout(() => {
@@ -2514,7 +2443,6 @@
                             }, 10000);
                         }
                     } else if (error.name === 'NotReadableError') {
-                        // Hardware error
                         hardwareError.style.display = 'block';
                         setTimeout(() => {
                             hardwareError.style.display = 'none';
@@ -2542,23 +2470,19 @@
             
             permissionRequested = true;
             
-            // Check if we already have permission
             if (navigator.permissions) {
                 navigator.permissions.query({ name: 'microphone' })
                     .then(permissionStatus => {
                         if (permissionStatus.state === 'granted') {
                             requestMicrophonePermission();
                         } else {
-                            // Show permission prompt
                             showPermissionPrompt();
                         }
                     })
                     .catch(() => {
-                        // Browser doesn't support permissions API, proceed directly
                         showPermissionPrompt();
                     });
             } else {
-                // Fallback for browsers without Permissions API
                 showPermissionPrompt();
             }
         }
@@ -2594,7 +2518,6 @@
         }
         
         function interruptCurrentAction() {
-            // Stop any ongoing speech
             if (isSpeaking && currentUtterance) {
                 synth.cancel();
                 isSpeaking = false;
@@ -2603,24 +2526,20 @@
                 container.classList.remove('voice-active');
             }
             
-            // Stop any processing
             if (isProcessing) {
                 isProcessing = false;
                 stopDataAbsorption();
             }
             
-            // Clear any typing in progress
             if (isTyping) {
                 clearTimeout(currentTypingTimeout);
                 isTyping = false;
                 typewriterQueue = [];
-                responseEl.innerHTML = responseEl.textContent; // Remove cursor
+                responseEl.innerHTML = responseEl.textContent;
             }
             
-            // Hide interrupt button
             interruptBtn.style.display = 'none';
             
-            // Restart recognition if needed
             if (isActive && !isMicrophonePaused && interactionMode === 'voice') {
                 setTimeout(() => {
                     try {
@@ -2635,15 +2554,11 @@
             updateStatus(isActive ? "AWAITING COMMAND" : "STANDBY");
         }
         
-        // Restart the system
         function restartSystem() {
-            // Clear any ongoing processes
             interruptCurrentAction();
             
-            // Reset conversation history but keep system prompt
             conversationHistory = [conversationHistory[0]];
             
-            // Reset state
             isActive = false;
             isProcessing = false;
             isMicrophonePaused = false;
@@ -2651,13 +2566,11 @@
             initialized = false;
             permissionGranted = false;
             
-            // Show boot animation
             bootAnimation.style.display = 'flex';
             bootAnimation.style.opacity = '1';
             container.style.opacity = '0';
             textModeContainer.style.opacity = '0';
             
-            // Reset UI elements
             micBtn.textContent = "INITIALIZE SYSTEM";
             micBtn.disabled = false;
             micBtn.classList.remove('active', 'error', 'warning');
@@ -2665,30 +2578,24 @@
             pauseBtn.classList.remove('active');
             interruptBtn.style.display = 'none';
             
-            // Hide settings and mode buttons during restart
             settingsBtn.style.display = 'none';
             modeBtn.style.display = 'none';
             systemBtn.style.display = 'none';
             
-            // Reset boot progress
             bootProgress.style.width = '0%';
             bootText.textContent = "INITIALIZING AI CORE";
             
-            // Run boot animation again
             runBootAnimation();
         }
         
-        // Deactivate the system
         function deactivateSystem() {
             isActive = false;
             updateStatus("STANDBY");
             updateResponse("System deactivated");
             
-            // Stop any ongoing processes
             interruptCurrentAction();
         }
         
-        // Load settings from localStorage
         function loadSettings() {
             const savedSettings = localStorage.getItem('astraAnimationSettings');
             if (savedSettings) {
@@ -2696,14 +2603,11 @@
                     const settings = JSON.parse(savedSettings);
                     animationsEnabled.particles = settings.particles !== false;
                     animationsEnabled.visualizer = settings.visualizer !== false;
-                    animationsEnabled.buttons = settings.buttons !== false;
-                    
-                    // Update toggle switches
+                    animationsEnabled.buttons = settings.buttons !== false;                
                     toggleParticles.checked = animationsEnabled.particles;
                     toggleVisualizer.checked = animationsEnabled.visualizer;
                     toggleButtons.checked = animationsEnabled.buttons;
                     
-                    // Apply settings
                     updateAnimationSettings();
                 } catch (e) {
                     console.error("Error loading settings:", e);
@@ -2716,7 +2620,6 @@
 		  loginBtn.disabled = false;
 		}     
 
-	 // Save settings to localStorage
         function saveSettings() {
             const settings = {
                 particles: animationsEnabled.particles,
@@ -2726,13 +2629,11 @@
             localStorage.setItem('astraAnimationSettings', JSON.stringify(settings));
         }
         
-        // Update animation settings
         function updateAnimationSettings() {
             animationsEnabled.particles = toggleParticles.checked;
             animationsEnabled.visualizer = toggleVisualizer.checked;
             animationsEnabled.buttons = toggleButtons.checked;
             
-            // Toggle button effects
             const buttons = document.querySelectorAll('.mic-btn, .pause-btn, .interrupt-btn, .permission-btn, .submit-btn');
             buttons.forEach(button => {
                 if (animationsEnabled.buttons) {
@@ -2743,18 +2644,15 @@
                 }
             });
             
-            // Save to localStorage
             saveSettings();
         }
         
-        // Switch between interaction modes
         function setInteractionMode(mode) {
             if (mode === interactionMode) return;
             
             interactionMode = mode;
             
             if (mode === 'voice') {
-                // Switch to voice mode
                 voiceModeBtn.classList.add('active');
                 textModeBtn.classList.remove('active');   
 				voiceModeBtn.addEventListener("click", () => {
@@ -2769,14 +2667,12 @@
 
                 
                 
-                // Fade out text mode, fade in voice mode
                 textModeContainer.style.opacity = '0';
                 setTimeout(() => {
                     textModeContainer.style.display = 'none';
                     container.style.opacity = '1';
                 }, 500);
                 
-                // If we have permission, start listening
                 if (initialized && permissionGranted && !isMicrophonePaused) {
                     try {
                         recognition.start();
@@ -2785,37 +2681,31 @@
                     }
                 }
             } else {
-                // Switch to text mode
                 voiceModeBtn.classList.remove('active');
                 textModeBtn.classList.add('active');
                 
-                // Fade out voice mode, fade in text mode
                 container.style.opacity = '0';
                 setTimeout(() => {
                     textModeContainer.style.display = 'flex';
                     textModeContainer.style.opacity = '1';
                 }, 500);
                 
-                // Stop any ongoing voice recognition
                 try {
                     recognition.stop();
                 } catch (e) {
                     console.error("Error stopping recognition:", e);
                 }
                 
-                // Focus the text input
                 setTimeout(() => {
                     apiInput.focus();
                 }, 100);
             }
         }
         
-        // Check internet connection
         function checkInternetConnection() {
             const status = navigator.onLine ? 'online' : 'offline';
             handleConnectionChange(status);
             
-            // Listen for changes
             window.addEventListener('online', () => handleConnectionChange('online'));
             window.addEventListener('offline', () => handleConnectionChange('offline'));
         }
@@ -2834,10 +2724,8 @@
             }
         }
         
-        // Auth functions
         async function handleGoogleLogin() {
             try {
-                // Show loading state
                 loginBtn.textContent = "Redirecting...";
                 loginBtn.disabled = true;
                 
@@ -2863,12 +2751,13 @@
             }
         }
         
-		 async function handleLogout() {
+		async function handleLogout() {
 			try {
 				const { error } = await supabase.auth.signOut();
 				if (error) throw error;
 				
 				removeLoginState();
+				localStorage.removeItem("astra_profile_pic");
 				localStorage.removeItem("astraAnimationSettings");
 				conversationHistory = [conversationHistory[0]];
 				window.location.reload(true);
@@ -2877,8 +2766,7 @@
 				console.error('Error signing out:', error.message);
 				alert('Logout failed: ' + error.message);
 			}
-		}  
-
+		}
         
         function populateChatHistory() {
             const container = document.getElementById('chat-history-container');
@@ -2889,7 +2777,6 @@
                 return;
             }
             
-            // Filter only user messages for history
             const userMessages = conversationHistory.filter(msg => msg.role === 'user');
             
             if (userMessages.length === 0) {
@@ -2897,18 +2784,15 @@
                 return;
             }
             
-            // Create history items
             userMessages.forEach((msg, index) => {
-                if (index < 10) { // Show only last 10 messages
+                if (index < 10) {
                     const historyItem = document.createElement('div');
                     historyItem.className = 'chat-history-item';
                     historyItem.innerHTML = `
                         <div class="chat-history-preview">${msg.content}</div>
                     `;
                     
-                    // Add click event to load this conversation
                     historyItem.addEventListener('click', () => {
-                        // This would need more complex implementation to restore full conversation
                         apiInput.value = msg.content;
                     });
                     
@@ -2921,25 +2805,45 @@
             profilePicInput.click();
         }
         
-        function handleProfilePicSelected(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    const imageDataUrl = e.target.result;
-                    profileBtn.innerHTML = `<img src="${imageDataUrl}" alt="Profile">`;
-                    
-                    // Save to localStorage
-                    const { data: { user } } = await supabase.auth.getUser();
-                    if (user) {
-                        localStorage.setItem(`astra_profile_pic_${user.id}`, imageDataUrl);
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
-        // Event Handlers
+		function handleProfilePicSelected(event) {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = async function(e) {
+					const imageDataUrl = e.target.result;
+					profileBtn.innerHTML = `<img src="${imageDataUrl}" alt="Profile">`;				
+					localStorage.setItem('astra_profile_pic', imageDataUrl);
+					const { data: { user } } = await supabase.auth.getUser();
+					if (user) {
+						const { error } = await supabase.auth.updateUser({
+							data: { profile_picture: imageDataUrl }
+						});
+						
+						if (error) {
+							console.error('Error saving profile picture to Supabase:', error);
+						}
+					}
+				};
+				reader.readAsDataURL(file);
+			}
+		}    
+
+		async function loadProfilePicture() {
+			const savedProfilePic = localStorage.getItem('astra_profile_pic');
+			if (savedProfilePic) {
+				profileBtn.innerHTML = `<img src="${savedProfilePic}" alt="Profile">`;
+			} else {
+			
+				const { data: { user } } = await supabase.auth.getUser();
+				if (user && user.user_metadata && user.user_metadata.profile_picture) {
+					profileBtn.innerHTML = `<img src="${user.user_metadata.profile_picture}" alt="Profile">`;
+					localStorage.setItem('astra_profile_pic', user.user_metadata.profile_picture);
+				} else {
+					profileBtn.innerHTML = `<div class="default-avatar">${user && user.email ? user.email[0].toUpperCase() : 'U'}</div>`;
+				}
+			}
+		}
+		
         if (isSpeechSupported) {
             recognition.onstart = () => {
                 if (!initialized || isMicrophonePaused || interactionMode !== 'voice') return;
@@ -2958,7 +2862,6 @@
                 container.classList.remove('voice-active');
                 core.style.transform = "translate(-50%, -50%) scale(1)";
                 
-                // Force restart recognition if we're in voice mode and not paused
                 if (!isMicrophonePaused && interactionMode === 'voice') {
                     setTimeout(() => {
                         try {
@@ -2991,7 +2894,6 @@
                     }
                 } else {
                     isProcessing = true;
-                    // Show interrupt button during processing
                     interruptBtn.style.display = 'block';
                     
                     const aiResponse = await queryAI(transcript);
@@ -2999,7 +2901,6 @@
                     speak(aiResponse, () => {
                         isProcessing = false;
                         updateStatus("AWAITING COMMAND");
-                        // Hide interrupt button when done
                         interruptBtn.style.display = 'none';
                     });
                 }
@@ -3019,7 +2920,6 @@
                     initialized = false;
                     permissionRequested = false;
                     
-                    // Show mobile help if on mobile
                     if (/Mobi|Android/i.test(navigator.userAgent)) {
                         mobileHelp.style.display = 'block';
                         setTimeout(() => {
@@ -3027,9 +2927,7 @@
                         }, 10000);
                     }
                 } else if (event.error === 'no-speech') {
-                    // No problem, we'll keep trying
                 } else if (event.error === 'audio-capture') {
-                    // No audio devices available
                     handleNoAudioDevices();
                 } else {
                     updateStatus("ERROR: " + event.error, true);
@@ -3039,7 +2937,6 @@
             };
         }
         
-		// Button event handlers
 		micBtn.addEventListener("click", () => {
 			if (!isLoggedIn) {
 				updateResponse("Please log in to use Voice Mode.");
@@ -3076,17 +2973,14 @@
             permissionRequested = false;
         });
         
-        // Settings panel event handlers
         settingsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
-            // Hide other panels if open
             modePanel.style.display = 'none';
             systemPanel.style.display = 'none';
             profileMenu.classList.remove('active');
             chatHistoryContainer.classList.remove('active');
             
-            // Add visual feedback
             settingsBtn.classList.add('active');
             setTimeout(() => {
                 settingsBtn.classList.remove('active');
@@ -3097,17 +2991,14 @@
         toggleVisualizer.addEventListener('change', updateAnimationSettings);
         toggleButtons.addEventListener('change', updateAnimationSettings);
         
-        // Mode selector event handlers
         modeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             modePanel.style.display = modePanel.style.display === 'block' ? 'none' : 'block';
-            // Hide other panels if open
             settingsPanel.style.display = 'none';
             systemPanel.style.display = 'none';
             profileMenu.classList.remove('active');
             chatHistoryContainer.classList.remove('active');
             
-            // Add visual feedback
             modeBtn.classList.add('active');
             setTimeout(() => {
                 modeBtn.classList.remove('active');
@@ -3117,17 +3008,14 @@
         voiceModeBtn.addEventListener('click', () => setInteractionMode('voice'));
         textModeBtn.addEventListener('click', () => setInteractionMode('text'));
         
-        // System control event handlers
         systemBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             systemPanel.style.display = systemPanel.style.display === 'block' ? 'none' : 'block';
-            // Hide other panels if open
             settingsPanel.style.display = 'none';
             modePanel.style.display = 'none';
             profileMenu.classList.remove('active');
             chatHistoryContainer.classList.remove('active');
             
-            // Add visual feedback
             systemBtn.classList.add('active');
             setTimeout(() => {
                 systemBtn.classList.remove('active');
@@ -3144,7 +3032,6 @@
             systemPanel.style.display = 'none';
         });
         
-        // Text input handler for text mode
         apiSubmitBtn.addEventListener('click', async () => {
             const text = apiInput.value.trim();
             if (!text) return;
@@ -3153,7 +3040,6 @@
             await queryAPI(text);
         });
         
-        // Handle Enter key in text input
         apiInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -3161,15 +3047,11 @@
             }
         });
         
-        // Auth event handlers
         loginBtn.addEventListener('click', handleGoogleLogin);
-        logoutBtnElement.addEventListener("click", handleLogout);
-        
-        // Profile event handlers
+        logoutBtnElement.addEventListener("click", handleLogout);      
         profileBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             profileMenu.classList.toggle('active');
-            // Hide other panels if open
             settingsPanel.style.display = 'none';
             modePanel.style.display = 'none';
             systemPanel.style.display = 'none';
@@ -3179,7 +3061,7 @@
         changeProfilePic.addEventListener('click', handleProfilePicChange);
         profilePicInput.addEventListener('change', handleProfilePicSelected);
         
-        // Close panels when clicking outside
+     
         document.addEventListener('click', (event) => {
             if (!settingsPanel.contains(event.target) && event.target !== settingsBtn) {
                 settingsPanel.style.display = 'none';
@@ -3198,28 +3080,23 @@
             }
         });
         
-        // Initialization
+    
         updateStatus("SYSTEM STANDBY");
         updateResponse(isSpeechSupported ? "Click button to initialize system" : "Voice commands not supported");
         pauseBtn.disabled = true;
         interruptBtn.style.display = 'none';
-        settingsBtn.style.display = 'none'; // Hide initially
-        modeBtn.style.display = 'none'; // Hide initially
-        systemBtn.style.display = 'none'; // Hide initially
-        textModeContainer.style.display = 'none'; // Hide initially
+        settingsBtn.style.display = 'none';
+        modeBtn.style.display = 'none';
+        systemBtn.style.display = 'none';
+        textModeContainer.style.display = 'none';
         
-        // Run boot animation on page load
         runBootAnimation();
         
-        // Check internet connection
         checkInternetConnection();
         
-        // Check auth status on load
         document.addEventListener('DOMContentLoaded', () => {
             checkLogin();
-            
-            // Listen for auth state changes
-            supabase.auth.onAuthStateChange((event, session) => {
+                        supabase.auth.onAuthStateChange((event, session) => {
                 if (event === 'SIGNED_IN' && session) {
                     checkLogin();
                 } else if (event === 'SIGNED_OUT') {
@@ -3235,6 +3112,7 @@
 				
 		document.addEventListener('DOMContentLoaded', resetLoginButton);
 		window.addEventListener('pageshow', resetLoginButton);
+		document.addEventListener('DOMContentLoaded', loadProfilePicture);		
 		
    </script>  
 </body>
