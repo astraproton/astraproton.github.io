@@ -3109,6 +3109,34 @@
 		document.addEventListener('DOMContentLoaded', resetLoginButton);
 		window.addEventListener('pageshow', resetLoginButton);
 		document.addEventListener('DOMContentLoaded', loadProfilePicture);		
+
+
+		function handlePageUnload() {
+			console.log("Page unloading - cleaning up speech synthesis");
+			
+			if (isSpeaking && currentUtterance) {
+				synth.cancel();
+				console.log("Cancelled ongoing speech synthesis");
+			}
+			
+			if (recognition && typeof recognition.stop === 'function') {
+				try {
+					recognition.stop();
+					console.log("Stopped speech recognition");
+				} catch (e) {
+					console.error("Error stopping recognition on page unload:", e);
+				}
+			}
+		}
+
+		window.addEventListener('beforeunload', handlePageUnload);
+
+		document.addEventListener('visibilitychange', function() {
+			if (document.visibilityState === 'hidden') {
+				handlePageUnload();
+			}
+		});
+
 		
    </script>  
 </body>
