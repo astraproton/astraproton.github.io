@@ -1614,6 +1614,7 @@
                 profileBtn.innerHTML = `<div class="default-avatar">${user.email ? user.email[0].toUpperCase() : 'U'}</div>`;
             }
 			
+			loadChatHistory();
         }
         // Groq API Configuration
         const GROQ_API_KEY = "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";
@@ -3042,11 +3043,23 @@
             };
         }
         
-        // Button event handlers
+		// Button event handlers
 		micBtn.addEventListener("click", () => {
 			if (!isLoggedIn) {
 				updateResponse("Please log in to use Voice Mode.");
 				return;
+			}
+			
+			if (!initialized) {
+				initializeSystem();
+			} else if (!isActive) {
+				isActive = true;
+				updateStatus("ACTIVE");
+				updateResponse("Systems online");
+				speak("Activated. How may I assist?", () => {
+					isProcessing = false;
+					updateStatus("AWAITING COMMAND");
+				});
 			}
 		});
 		
