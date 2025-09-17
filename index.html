@@ -1688,11 +1688,11 @@
 
 				if (session && session.user) {
 					console.log("User is logged in:", session.user);
-					isLoggedIn = true; // ✅ user logged in
+					isLoggedIn = true;
 					updateUIForLoggedInUser(session.user);
 				} else {
 					console.log("No active session");
-					isLoggedIn = false; // 🚫 not logged in
+					isLoggedIn = false;
 					loginBtn.style.display = "block";
 					profileBtn.style.display = "none";
 				}
@@ -1702,7 +1702,6 @@
             }
         }
 
-		// Local storage helpers
 		function saveLoginState(user) {
 		  localStorage.setItem("loginState", JSON.stringify({ isLoggedIn: true, user }));
 		}
@@ -1716,14 +1715,14 @@
 		}
 
 
-		// Run on page load
 		checkLogin();
 
-		// Handle login button click
 		loginBtn.addEventListener("click", async () => {
-		  // Show loading state
 		  loginBtn.textContent = "Redirecting...";
 		  loginBtn.disabled = true;
+		  const redirectTimeout = setTimeout(() => {
+			resetLoginButton();
+		  }, 3000);
 		  
 		  const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
@@ -1732,22 +1731,20 @@
 			}
 		  });
 
+		  clearTimeout(redirectTimeout);
+		  
 		  if (error) {
 			console.error("Login failed:", error);
-			loginBtn.textContent = "Login with Google";
-			loginBtn.disabled = false;
+			resetLoginButton();
 		  }
-		});
+		});		
 		
 		
-		
-		// Handle logout
 		logoutBtnElement.addEventListener("click", async () => {
 			await supabase.auth.signOut();
-			checkLogin(); // reset UI to login button
+			checkLogin();
 		});
 						
-		// Close profile menu when clicking outside
 		document.addEventListener('click', (event) => {
 			if (!profileBtn.contains(event.target) && !profileMenu.contains(event.target)) {
 				profileMenu.classList.remove('active');
@@ -1756,19 +1753,13 @@
         document.addEventListener("DOMContentLoaded", async () => {
             console.log("DOM loaded, initializing...");
             
-            // Initialize auth listener
             initializeAuthListener();
-            
-            // Check for OAuth callback
             await handleOAuthCallback();
-            
-            // Check initial login state
             await checkLogin();
             
           
         });
 		  
-		  // Listen for auth state changes
         function initializeAuthListener() {
             supabase.auth.onAuthStateChange((event, session) => {
                 console.log("Auth state changed:", event, session);
@@ -2720,7 +2711,12 @@
             }
         }
         
-        // Save settings to localStorage
+		function resetLoginButton() {
+		  loginBtn.textContent = "Login with Google";
+		  loginBtn.disabled = false;
+		}     
+
+	 // Save settings to localStorage
         function saveSettings() {
             const settings = {
                 particles: animationsEnabled.particles,
@@ -3236,6 +3232,9 @@
             permissionGranted = false;
             initialized = false;
         });
+				
+		document.addEventListener('DOMContentLoaded', resetLoginButton);
+		window.addEventListener('pageshow', resetLoginButton);
 		
    </script>  
 </body>
