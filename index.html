@@ -2401,9 +2401,9 @@
                     content: aiResponse
                 });
                 
-                if (conversationHistory.length > 6) {
-                    conversationHistory = conversationHistory.slice(-6);
-                }
+				if (conversationHistory.length > 9) {
+					conversationHistory = [conversationHistory[0], ...conversationHistory.slice(-8)];
+				}
                 
                 return aiResponse;
 
