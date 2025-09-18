@@ -1397,6 +1397,12 @@
 				margin-top: 10px;
 			}
 
+			#voice-interface {
+				opacity: 0;
+				visibility: hidden;
+				transition: opacity 0.5s ease, visibility 0.5s ease;
+			}
+			
 			.boot-dot {
 				width: 8px;
 				height: 8px;
@@ -2004,60 +2010,69 @@
             }, 5000);
         }
         
-        function runBootAnimation() {
-            container.style.opacity = '0';
-            textModeContainer.style.opacity = '0';
-            
-            const bootMessages = [
-                "INITIALIZING AI CORE",
-                "LOADING NEURAL NETWORKS",
-                "CALIBRATING VOICE MODULE",
-                "ESTABLISHING SECURE LINK",
-                "SYSTEM READY"
-            ];
-            
-            let currentStep = 0;
-            const totalSteps = 100;
-            const bootInterval = setInterval(() => {
-                currentStep++;
-                const progress = Math.min(currentStep / totalSteps, 1);
-                bootProgress.style.width = `${progress * 100}%`;
-                
-                if (currentStep === 20) bootText.textContent = bootMessages[1];
-                if (currentStep === 40) bootText.textContent = bootMessages[2];
-                if (currentStep === 60) bootText.textContent = bootMessages[3];
-                if (currentStep === 80) bootText.textContent = bootMessages[4];
-                
-                if (currentStep >= totalSteps) {
-                    clearInterval(bootInterval);
-                    setTimeout(() => {
-                        bootAnimation.style.opacity = '0';
-                        setTimeout(() => {
-                            bootAnimation.style.display = 'none';
-                            container.style.opacity = '1';
-                            settingsBtn.style.display = 'flex';
-                            modeBtn.style.display = 'flex';
-                            systemBtn.style.display = 'flex';
-                            loadSettings();
-                        }, 1000);
-                    }, 500);
-                }
-            }, 30);
-            
-            const checkVoices = () => {
-                const voices = synth.getVoices();
-                if (voices.length > 0) {
-                    console.log("Voices loaded:", voices);
-                    clearInterval(voiceCheckInterval);
-                }
-            };
-            
-            const voiceCheckInterval = setInterval(checkVoices, 500);
-            checkVoices();
-           
-            synth.onvoiceschanged = checkVoices;
-        }
-        
+		function runBootAnimation() {
+			voiceInterface.style.opacity = '0';
+			voiceInterface.style.visibility = 'hidden';
+			container.style.opacity = '0';
+			textModeContainer.style.opacity = '0';
+			
+			const bootMessages = [
+				"INITIALIZING AI CORE",
+				"LOADING NEURAL NETWORKS",
+				"CALIBRATING VOICE MODULE",
+				"ESTABLISHING SECURE LINK",
+				"SYSTEM READY"
+			];
+			
+			let currentStep = 0;
+			const totalSteps = 100;
+			const bootInterval = setInterval(() => {
+				currentStep++;
+				const progress = Math.min(currentStep / totalSteps, 1);
+				bootProgress.style.width = `${progress * 100}%`;
+				
+				if (currentStep === 20) bootText.textContent = bootMessages[1];
+				if (currentStep === 40) bootText.textContent = bootMessages[2];
+				if (currentStep === 60) bootText.textContent = bootMessages[3];
+				if (currentStep === 80) bootText.textContent = bootMessages[4];
+				
+				if (currentStep >= totalSteps) {
+					clearInterval(bootInterval);
+					setTimeout(() => {
+						bootAnimation.style.opacity = '0';
+						setTimeout(() => {
+							bootAnimation.style.display = 'none';
+							if (interactionMode === 'voice') {
+								container.style.opacity = '1';
+								voiceInterface.style.opacity = '1';
+								voiceInterface.style.visibility = 'visible';
+							} else {
+								textModeContainer.style.display = 'flex';
+								textModeContainer.style.opacity = '1';
+							}
+							settingsBtn.style.display = 'flex';
+							modeBtn.style.display = 'flex';
+							systemBtn.style.display = 'flex';
+							loadSettings();
+						}, 1000);
+					}, 500);
+				}
+			}, 30);
+			
+			const checkVoices = () => {
+				const voices = synth.getVoices();
+				if (voices.length > 0) {
+					console.log("Voices loaded:", voices);
+					clearInterval(voiceCheckInterval);
+				}
+			};
+			
+			const voiceCheckInterval = setInterval(checkVoices, 500);
+			checkVoices();
+		   
+			synth.onvoiceschanged = checkVoices;
+		}
+
         function typewriterEffect(text, callback) {
             if (!text || typeof text !== 'string') return;
             
