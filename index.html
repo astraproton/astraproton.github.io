@@ -2208,7 +2208,7 @@
         const standbyWord = "deactivate";
         let permissionRequested = false;
         
-        function updateStatus(text, isError = false, isProcessing = false) {
+        async function updateStatus(text, isError = false, isProcessing = false) {
             statusEl.textContent = text;
             statusEl.className = 'status';
             
