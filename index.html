@@ -2316,7 +2316,7 @@
 		async function initLocationTimeDisplay() {
 		  try {
 			// Fetch location from ip-api
-			const locRes = await fetch("http://ip-api.com/json/?fields=status,message,country,regionName,city,timezone");
+			const locRes = await fetch("https://ip-api.com/json/?fields=status,message,country,regionName,city,timezone");
 			if (!locRes.ok) throw new Error("Failed to fetch location");
 			const locData = await locRes.json();
 			if (locData.status !== "success") throw new Error(locData.message || "Location lookup failed");
