@@ -1472,71 +1472,58 @@
 			  border-radius: 0 0 3px 3px;
 			}
 
+		.location-time-container {
+			position: fixed;
+			bottom: 20px;
+			left: 20px;
+			background: rgba(10, 10, 18, 0.7);
+			border: 1px solid var(--primary);
+			border-radius: 10px;
+			padding: 0.8rem 1rem;
+			z-index: 90;
+			backdrop-filter: blur(5px);
+			min-width: 150px;
+			box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
+			transition: all 0.3s ease;
+		}
+
+		.location-time-container:hover {
+			box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
+			transform: translateY(-2px);
+		}
+
+
+		.location-time-container .time {
+			font-size: 1.2rem;
+			font-weight: bold;
+			color: var(--accent);
+			text-shadow: 0 0 8px var(--accent);
+			margin-bottom: 0.2rem;
+		}
+
+
+		location-time-container .date {
+			font-size: 0.7rem;
+			color: var(--secondary);
+			text-shadow: 0 0 5px var(--secondary);
+		}
+
+		@media (max-width: 768px) {
 			.location-time-container {
-				position: fixed;
-				bottom: 20px;
-				left: 20px;
-				background: rgba(10, 10, 18, 0.7);
-				border: 1px solid var(--primary);
-				border-radius: 10px;
-				padding: 0.8rem 1rem;
-				z-index: 90;
-				backdrop-filter: blur(5px);
-				min-width: 200px;
-				box-shadow: 0 0 10px rgba(0, 247, 255, 0.3);
-				transition: all 0.3s ease;
+				bottom: 15px;
+				left: 15px;
+				padding: 0.6rem 0.8rem;
+				min-width: 120px;
 			}
-
-			.location-time-container:hover {
-				box-shadow: 0 0 15px rgba(0, 247, 255, 0.5);
-				transform: translateY(-2px);
-			}
-
-			.location-time-container .location {
-				font-size: 0.8rem;
-				color: var(--primary);
-				margin-bottom: 0.3rem;
-				text-shadow: var(--text-glow);
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-
-			.location-time-container .time {
-				font-size: 1.2rem;
-				font-weight: bold;
-				color: var(--accent);
-				text-shadow: 0 0 8px var(--accent);
-				margin-bottom: 0.2rem;
-			}
-
-			.location-time-container .date {
-				font-size: 0.7rem;
-				color: var(--secondary);
-				text-shadow: 0 0 5px var(--secondary);
-			}
-
-			@media (max-width: 768px) {
-				.location-time-container {
-					bottom: 15px;
-					left: 15px;
-					padding: 0.6rem 0.8rem;
-					min-width: 160px;
-				}
+						
+		.location-time-container .time {
+			font-size: 1rem;
+		}
 				
-				.location-time-container .location {
-					font-size: 0.7rem;
-				}
-				
-				.location-time-container .time {
-					font-size: 1rem;
-				}
-				
-				.location-time-container .date {
-					font-size: 0.6rem;
-				}
-			}
-
+		.location-time-container .date {
+			font-size: 0.6rem;
+		}
+	}
 
 
     </style>
@@ -1718,7 +1705,8 @@
 	</div>
 
 	<div class="location-time-container" id="location-time-info">
-		<div>Loading location...</div>
+		<div class="time">--:--:--</div>
+		<div class="date">Loading...</div>
 	</div>
 
     <script>
@@ -2310,89 +2298,53 @@
 
 		}
 		
-		let userTimezone = null;
-		let userLocation = "";
-
-		async function initLocationTimeDisplay() {
-		  try {
-			// Fetch location from ip-api
-			const locRes = await fetch("https://ip-api.com/json/?fields=status,message,country,regionName,city,timezone");
-			if (!locRes.ok) throw new Error("Failed to fetch location");
-			const locData = await locRes.json();
-			if (locData.status !== "success") throw new Error(locData.message || "Location lookup failed");
-
-			// Store timezone and location for later use
-			userTimezone = locData.timezone;
-			userLocation = `${locData.city}, ${locData.regionName}, ${locData.country}`;
-
-			// Start the clock
-			updateClock();
-			setInterval(updateClock, 1000); // update every second
-		  } catch (error) {
-			console.error("Error fetching location/time data:", error);
-			document.querySelector("#location-time-info").innerHTML = `
-			  <div class="location">Unable to load location/time</div>
-			`;
-		  }
-		}
-
-		function updateClock() {
-		  if (!userTimezone) return;
-
-		  const now = new Date();
-		  const localTime = now.toLocaleTimeString("en-US", { 
-			hour: "2-digit", 
-			minute: "2-digit", 
-			second: "2-digit", 
-			timeZone: userTimezone 
-		  });
-		  const localDate = now.toLocaleDateString("en-US", { 
-			weekday: "long", 
-			year: "numeric", 
-			month: "long", 
-			day: "numeric", 
-			timeZone: userTimezone 
-		  });
-
-		  const locationEl = document.querySelector("#location-time-info");
-		  locationEl.innerHTML = `
-			<div class="location">${userLocation}</div>
-			<div class="time">${localTime}</div>
-			<div class="date">${localDate}</div>
-		  `;
-		}
-
-		function displayLocationTimeInfo(locationData, timeData) {
-			const infoContainer = document.getElementById('location-time-info');
-			
-			if (!locationData || !timeData) {
-				infoContainer.innerHTML = '<div class="location">Location data unavailable</div>';
-				return;
-			}
-			
-			const city = locationData.city || 'Unknown';
-			const region = locationData.region || locationData.regionName || 'Unknown';
-			const country = locationData.country_name || locationData.country || 'Unknown';
-			const location = `${city}, ${region}, ${country}`;
-			
-			let dateTime;
+		function initTimeDisplay() {
 			try {
-				dateTime = new Date(timeData.datetime);
-			} catch (e) {
-				console.error('Error parsing datetime:', e);
-				dateTime = new Date();
+				updateClock();
+				setInterval(updateClock, 1000);
+			} catch (error) {
+				console.error("Error initializing time display:", error);
+				updateClock();
+				setInterval(updateClock, 1000);
 			}
-			
-			const formattedTime = dateTime.toLocaleTimeString();
-			const formattedDate = dateTime.toLocaleDateString();
-			
-			infoContainer.innerHTML = `
-				<div class="location">${location}</div>
-				<div class="time">${formattedTime}</div>
-				<div class="date">${formattedDate}</div>
-			`;
 		}
+				
 
+		
+		function updateClock() {
+			try {
+				const now = new Date();
+				
+				const localTime = now.toLocaleTimeString("en-US", { 
+					hour: "2-digit", 
+					minute: "2-digit", 
+					second: "2-digit"
+				});
+				
+				const localDate = now.toLocaleDateString("en-US", { 
+					weekday: "long", 
+					year: "numeric", 
+					month: "long", 
+					day: "numeric"
+				});
+
+				const timeEl = document.querySelector("#location-time-info");
+				if (timeEl) {
+					timeEl.innerHTML = `
+						<div class="time">${localTime}</div>
+						<div class="date">${localDate}</div>
+					`;
+				}
+			} catch (error) {
+				console.error("Error updating clock:", error);
+				const timeEl = document.querySelector("#location-time-info");
+				if (timeEl) {
+					timeEl.innerHTML = `
+						<div class="time">--:--:--</div>
+					`;
+				}
+			}
+		}
 	
         function showPermissionError() {
             permissionError.style.display = 'block';
@@ -3356,7 +3308,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             checkLogin();
 			initParticles();
-			initLocationTimeDisplay();
+			initTimeDisplay();
                         supabase.auth.onAuthStateChange((event, session) => {
                 if (event === 'SIGNED_IN' && session) {
                     checkLogin();
@@ -3536,7 +3488,7 @@
 				handlePageUnload();
 			}
 		});
-		document.addEventListener("DOMContentLoaded", initLocationTimeDisplay);
+		document.addEventListener("DOMContentLoaded", initTimeDisplay);
 
 	
 	
