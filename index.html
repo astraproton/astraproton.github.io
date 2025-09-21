@@ -1728,7 +1728,7 @@
             if (code) {
                 try {
                     console.log("Processing OAuth callback with code");
-                    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+                    const { data, error } = await supabase.auth.exchangeCodeForSession({ code });
                     
                     if (error) {
                         console.error("OAuth callback error:", error.message);
