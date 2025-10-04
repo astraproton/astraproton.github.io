@@ -2805,14 +2805,7 @@
             window.addEventListener('online', () => handleConnectionChange('online'));
             window.addEventListener('offline', () => handleConnectionChange('offline'));
         }
-
-		function loadAdScript() {
-		    const script = document.createElement('script');
-		    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814';
-		    script.async = true;
-		    script.crossOrigin = 'anonymous';
-		    document.head.appendChild(script);
-		}
+		
         function handleConnectionChange(status) {
             if (status === 'online') {
                 connectionStatus.textContent = "CONNECTION RESTORED";
@@ -3051,10 +3044,6 @@
             }
         });
 		
-		document.addEventListener('DOMContentLoaded', function() {
-		    loadAdScript();
-		});
-		
         document.addEventListener('click', (event) => {
             if (!settingsPanel.contains(event.target) && event.target !== settingsBtn) {
                 settingsPanel.style.display = 'none';
@@ -3265,5 +3254,18 @@
 	
 	
    </script> 
+	<script>
+	window.addEventListener('load', function() {
+	    // Only load ads if not in development and no ad blocker detected
+	    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+	        const adScript = document.createElement('script');
+	        adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814';
+	        adScript.async = true;
+	        adScript.crossOrigin = 'anonymous';
+	        adScript.onerror = () => console.log('Ads disabled or blocked');
+	        document.head.appendChild(adScript);
+	    }
+	});
+	</script>
 </body>
 </html>
