@@ -3248,25 +3248,61 @@
 	
    </script> 
 	<script>
-	window.addEventListener('load', function() {
-	    // Only load ads if not in development
-	    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-	        try {
-	            const adScript = document.createElement('script');
-	            adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814';
-	            adScript.async = true;
-	            adScript.crossOrigin = 'anonymous';
-	            adScript.onerror = () => {
-	                // Silently handle the error without logging
-	                return false;
-	            };
-	            document.head.appendChild(adScript);
-	        } catch (error) {
-	            // Completely suppress any errors
-	        }
-	    }
-	});
-	</script>
+// Advanced ad loading with proper error handling
+window.addEventListener('load', function() {
+    // Only attempt to load ads in production environment
+    if (window.location.hostname === 'localhost' || 
+        window.location.hostname === '127.0.0.1' || 
+        window.location.protocol === 'file:') {
+        console.log('Ads disabled in development/local environment');
+        return;
+    }
+    
+    // Check if ads are likely to be blocked
+    if (typeof adsbygoogle !== 'undefined') {
+        console.log('AdBlocker may be active');
+        return;
+    }
+    
+    // Load Google Ads script
+    const loadAdScript = function() {
+        try {
+            const script = document.createElement('script');
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814';
+            script.async = true;
+            script.crossOrigin = 'anonymous';
+            script.onload = function() {
+                console.log('Ad script loaded successfully');
+                // Initialize ads after script loads
+                setTimeout(initializeAds, 1000);
+            };
+            script.onerror = function() {
+                console.log('Ad script failed to load (likely blocked)');
+                // You can show a fallback message or alternative content here
+            };
+            document.head.appendChild(script);
+        } catch (error) {
+            console.log('Error loading ad script:', error);
+        }
+    };
+    
+    // Initialize ads
+    function initializeAds() {
+        try {
+            if (typeof (adsbygoogle = window.adsbygoogle || []) !== 'undefined') {
+                // Push ad requests
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                console.log('Ads initialized successfully');
+            }
+        } catch (error) {
+            console.log('Error initializing ads:', error);
+        }
+    }
+    
+    // Start the process
+    loadAdScript();
+});
+</script>
 	<div class="ad-container" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000;">
 	    <ins class="adsbygoogle"
 	        style="display:block"
