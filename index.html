@@ -1524,8 +1524,6 @@
 
 
     </style>
-	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814"
-	     crossorigin="anonymous"></script>	
 </head>
 <body>
     <div class="cyber-grid"></div>
@@ -2807,7 +2805,14 @@
             window.addEventListener('online', () => handleConnectionChange('online'));
             window.addEventListener('offline', () => handleConnectionChange('offline'));
         }
-        
+
+		function loadAdScript() {
+		    const script = document.createElement('script');
+		    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1344953504819814';
+		    script.async = true;
+		    script.crossOrigin = 'anonymous';
+		    document.head.appendChild(script);
+		}
         function handleConnectionChange(status) {
             if (status === 'online') {
                 connectionStatus.textContent = "CONNECTION RESTORED";
@@ -3045,7 +3050,11 @@
                 apiSubmitBtn.click();
             }
         });
-        
+		
+		document.addEventListener('DOMContentLoaded', function() {
+		    loadAdScript();
+		});
+		
         document.addEventListener('click', (event) => {
             if (!settingsPanel.contains(event.target) && event.target !== settingsBtn) {
                 settingsPanel.style.display = 'none';
